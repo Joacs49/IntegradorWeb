@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/login.css';
 import ComponenteLogin from '../components/componenteLogin';
 
@@ -6,14 +7,26 @@ import ComponenteLogin from '../components/componenteLogin';
 function LoginForm() {
   const [isLogin] = useState(true);
   const { iniciarSesion, register } = ComponenteLogin();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Simulación de inicio de sesión con los datos proporcionados
+    const correo = e.target.elements.correo.value;
+    const contraseña = e.target.elements.contraseña.value;
+
+    if (correo === 'carlos@gmail.com' && contraseña === '123456') {
+      // Aquí podrías realizar cualquier acción adicional, como guardar el estado de sesión
+      console.log('Inicio de sesión exitoso');
+      navigate('/usuarioPrincipal');
+    } else {
+      console.log('Correo o contraseña incorrectos');
+    }
   };
 
   return (
     <main>
-      <div className="contenedor_todo">
+      <div className="contenedor_todo" >
         <div className="caja_trasera">
           <div className={`caja_trasera-login ${isLogin ? 'visible' : ''}`}>
             <h3>¿Ya tienes una cuenta?</h3>
@@ -30,8 +43,8 @@ function LoginForm() {
         <div className="contenedor_login-register">
           <form className={`formulario_login ${isLogin ? 'visible' : ''}`} onSubmit={handleSubmit}>
             <h2>Iniciar Sesión</h2>
-            <input type="text" placeholder="Correo Electrónico" />
-            <input type="password" placeholder="Contraseña" />
+            <input type="text" name="correo" placeholder="Correo Electrónico" defaultValue="carlos@gmail.com" />
+            <input type="password" name="contraseña" placeholder="Contraseña" defaultValue="123456" />
             <button type="submit">Entrar</button>
           </form>
 
