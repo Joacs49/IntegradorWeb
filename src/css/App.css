@@ -38,7 +38,7 @@ body {
 
 .slide.active {
   opacity: 1;
-  position: relative; /* Asegura que el video activo esté visible */
+  position: relative; 
 }
 
 .min-h-screen {
