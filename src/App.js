@@ -12,7 +12,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Cambia la clase del body según la ubicación actual
+  
     const isLoginForm = location.pathname === '/loginForm';
     document.body.className = isLoginForm ? 'login-background' : 'home-background';
   }, [location.pathname]);
@@ -33,9 +33,14 @@ function App() {
 
       <header>
         <div className="container flex items-center justify-between gap-4">
-          <Link to="/" className="logo">
+          <Link to="/" className="logo" onClick={(e) => e.preventDefault()}>
             NUTRIFIT
           </Link>
+          {!isLoggedIn && location.pathname === '/loginForm' && (
+            <div className="nav-links flex items-center gap-4">
+              <button onClick={() => navigate('/')} className="nav-link">Volver a Principal</button>
+            </div>
+          )}
           {!isLoggedIn && location.pathname !== '/loginForm' && (
             <div className="nav-links flex items-center gap-4">
               <Link to="/loginForm" className="nav-link">Iniciar Sesión</Link>

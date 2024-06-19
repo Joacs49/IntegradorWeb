@@ -95,8 +95,8 @@ function UsuarioPrincipal({ onLogout }) {
 
   //Ejemplo para historial de presupuesto
   const historialPresupuesto = [
-    { mes: "Enero 2024", presupuestoAsignado: 1000, gastosReales: 850 },
-    { mes: "Febrero 2024", presupuestoAsignado: 1200, gastosReales: 1150 },
+    { mes: "17/05/2024", presupuestoAsignado: 1000, gastosReales: 850 },
+    { mes: "21/06/2024", presupuestoAsignado: 1200, gastosReales: 1150 },
   ];
 
   return (
@@ -204,14 +204,6 @@ function UsuarioPrincipal({ onLogout }) {
                   />
                   <br></br>
                   <br></br>
-                  <h4>Presupuesto mensual</h4>
-                  <input
-                    type="number"
-                    placeholder="Presupuesto en soles (S/.)"
-                    min="0"
-                    value={presupuesto}
-                    onChange={(e) => setPresupuesto(e.target.value)}
-                  />
                 </div>
                 <button type="submit">Actualizar Datos</button>
               </form>
@@ -236,12 +228,12 @@ function UsuarioPrincipal({ onLogout }) {
                   />
                 </div>
                 <div className="form-group">
-                  <h4>Ingredientes</h4>
+                  <h4>Presupuesto</h4>
                   {ingredientes.map((ingrediente, index) => (
                     <div key={index} className="ingrediente">
                       <input
                         type="text"
-                        placeholder="Nombre del Ingrediente"
+                        placeholder="Ingrese el Presupuesto"
                         value={ingrediente.nombre}
                         onChange={(e) =>
                           handleIngredienteChange(
@@ -251,44 +243,14 @@ function UsuarioPrincipal({ onLogout }) {
                           )
                         }
                       />
-                      <input
-                        type="number"
-                        step="any"
-                        placeholder="Cantidad (gr)"
-                        min="0"
-                        value={ingrediente.cantidad}
-                        onChange={(e) =>
-                          handleIngredienteChange(
-                            index,
-                            "cantidad",
-                            e.target.value
-                          )
-                        }
-                      />
-                      <input
-                        type="number"
-                        step="any"
-                        placeholder="Precio (S/.)"
-                        value={ingrediente.precio}
-                        onChange={(e) =>
-                          handleIngredienteChange(
-                            index,
-                            "precio",
-                            e.target.value
-                          )
-                        }
-                      />
                     </div>
                   ))}
-                  <button type="button" onClick={handleAddIngrediente}>
-                    Añadir Ingrediente
-                  </button>
                 </div>
-                <button type="submit">Añadir Receta</button>
+                <button type="submit">Generar</button>
               </form>
               <br />
               <br />
-              <h3>Recetas Añadidas</h3>
+              <h3>Recetas</h3>
               <ul className="recetas-lista">
                 {recetas.map((receta, index) => (
                   <li key={index}>
@@ -305,8 +267,8 @@ function UsuarioPrincipal({ onLogout }) {
                   </li>
                 ))}
                 <h3>
-                  Costo Total de la receta: S/.{" "}
-                  {calcularCostoTotal().toFixed(2)}
+                  
+                  
                 </h3>
               </ul>
             </div>
@@ -314,12 +276,12 @@ function UsuarioPrincipal({ onLogout }) {
 
           {opcionSeleccionada === "presupuesto" && (
             <div>
-              <h2>Historial de presupuesto</h2>
+              <h2>Historial de Presupuesto</h2>
               <div className="historial-presupuesto">
                 <table>
                   <thead>
                     <tr>
-                      <th>Mes/Año</th>
+                      <th>Fecha</th>
                       <th>Presupuesto Asignado (S/.)</th>
                       <th>Gastos Reales (S/.)</th>
                     </tr>

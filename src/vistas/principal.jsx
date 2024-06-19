@@ -15,15 +15,15 @@ function Principal() {
         <div className="text-content">
           <div className="badge">Bienestar Integral</div>
           <h1 className="main-heading">Nutre tu cuerpo, Alimenta tu mente.</h1>
-          <p className="description">s
+          <p className="description">
             Encuentra el equilibrio perfecto entre una alimentación saludable y el bienestar mental.
           </p>
           <div className="button-group">
             <a href="/#" className="btn-primary">
-              Posibles
+              Recetas Saludables
             </a>
             <a href="/#" className="btn-secondary">
-              Posibles
+              Consejos
             </a>
           </div>
         </div>
