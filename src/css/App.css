@@ -3,10 +3,10 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}º
+}
 
 .home-background {
-  background-color: #67ffcc;
+  background: linear-gradient(to right , #1F7B40, #268B4C, #30A55D, #3AB86D, #3BBA6E);
 }
 
 .login-background {
@@ -178,8 +178,9 @@ header {
 }
 
 .description {
-  color: #6b7280;
-  font-size: 18px;
+  color: #241e1e;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 22px;
 }
 
 .button-group {
