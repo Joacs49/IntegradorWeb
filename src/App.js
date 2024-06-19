@@ -18,6 +18,9 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  const isLoginForm = location.pathname === '/loginForm';
+  document.body.className = isLoginForm ? 'login-background' : 'home-background';
 
   const handleLogin = () => {
     setIsLoggedIn(true);
