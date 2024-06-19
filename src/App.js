@@ -1,15 +1,7 @@
-import React, { useState } from 'react';
-import {
-  Routes,
-  Route,
-  Link,
-  useLocation,
-  useNavigate
-} from 'react-router-dom';
-
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import './css/App.css';
 import './css/login.css';
-
 import Principal from './vistas/principal';
 import LoginForm from './vistas/loginForm';
 import UsuarioPrincipal from './vistas/usuarioPrincipal';
@@ -18,13 +10,16 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
-  const isLoginForm = location.pathname === '/loginForm';
-  document.body.className = isLoginForm ? 'login-background' : 'home-background';
+
+  useEffect(() => {
+    // Cambia la clase del body según la ubicación actual
+    const isLoginForm = location.pathname === '/loginForm';
+    document.body.className = isLoginForm ? 'login-background' : 'home-background';
+  }, [location.pathname]);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    navigate('/usuarioPrincipal'); // Redirigir a la página principal del usuario
+    navigate('/usuarioPrincipal');
   };
 
   const handleLogout = () => {
@@ -35,6 +30,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
+
       <header>
         <div className="container flex items-center justify-between gap-4">
           <Link to="/" className="logo">
@@ -54,7 +50,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Principal />} />
           <Route path="/loginForm" element={<LoginForm defaultForm="login" onLogin={handleLogin} />} />
-          {/* Pasar handleLogout como onLogout */}
           <Route path="/usuarioPrincipal" element={<UsuarioPrincipal onLogout={handleLogout} />} />
         </Routes>
       </main>

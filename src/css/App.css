@@ -3,16 +3,42 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  min-height: 100vh;
-  background-image: none;
 }
 
 .home-background {
-  background-color: #e8f0fe; 
+  background-color: #67ffcc;
 }
 
 .login-background {
-  background-color: #c8c9ca; 
+  background-image: url(../img/img2.jpg);
+  background-size: 100%; 
+  background-repeat: no-repeat; 
+}
+
+.image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Añadido para apilar videos */
+}
+
+.slide {
+  max-width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  position: absolute; /* Añadido para apilar videos */
+  top: 0;
+  left: 0;
+  border-radius: 16px;
+}
+
+.slide.active {
+  opacity: 1;
+  position: relative; /* Asegura que el video activo esté visible */
 }
 
 .min-h-screen {
@@ -51,10 +77,6 @@ body {
 
 .content-container {
   margin-top: 180px; 
-}
-
-.image-container {
-  max-width: 100%; 
 }
 
 .responsive-image {
@@ -110,15 +132,14 @@ header {
 .container2 {
   width: 100%;
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 48px 16px;
+  margin: 80px auto 0;
+  padding: 0;
 }
 
 .grid-container {
   display: grid;
   gap: 32px;
   grid-template-columns: 1fr;
-  align-items: center;
 }
 
 @media (min-width: 768px) {
@@ -223,6 +244,7 @@ header {
   display: grid;
   gap: 32px;
   margin-top: 48px;
+  margin-bottom: 40px;
 }
 
 @media (min-width: 768px) {
@@ -268,4 +290,16 @@ header {
 
 .feature-description {
   color: #6b7280;
+}
+
+.slider-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
