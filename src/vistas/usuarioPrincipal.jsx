@@ -16,9 +16,7 @@ function UsuarioPrincipal({ onLogout }) {
 
   const [recetas, setRecetas] = useState([]);
   const [nombreReceta, setNombreReceta] = useState("");
-  const [ingredientes, setIngredientes] = useState([
-    { nombre: "", cantidad: "" },
-  ]);
+  const [ingredientes, setIngredientes] = useState([{ nombre: "", cantidad: "" }]);
 
   const handleOpcionClick = (opcion) => {
     setOpcionSeleccionada(opcion);
@@ -32,7 +30,7 @@ function UsuarioPrincipal({ onLogout }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógicar a implementar para actualizar los datos
+    // Lógica a implementar para actualizar los datos
     console.log("Datos actualizados:", {
       nombreCompleto,
       correoElectronico,
@@ -48,21 +46,20 @@ function UsuarioPrincipal({ onLogout }) {
 
   const handleRecetaSubmit = (e) => {
     e.preventDefault();
-  
+
     const ingredientesReceta = [...ingredientes];
 
     const nuevaReceta = {
       nombreReceta,
       ingredientes: ingredientesReceta
     };
-  
+
     setRecetas([...recetas, nuevaReceta]);
     setNombreReceta('');
     setIngredientes([{ nombre: '', cantidad: '', precio: '' }]);
-  
+
     alert('Receta añadida correctamente');
   };
-  
 
   const handleIngredienteChange = (index, field, value) => {
     const newIngredientes = [...ingredientes];
@@ -78,22 +75,21 @@ function UsuarioPrincipal({ onLogout }) {
   };
 
   const calcularCostoTotal = () => {
-  let costoTotal = 0;
+    let costoTotal = 0;
 
-  recetas.forEach((receta) => {
-    receta.ingredientes.forEach((ingrediente) => {
-      const precio = parseFloat(ingrediente.precio);
-      if (!isNaN(precio)) {
-        costoTotal += precio;
-      }
+    recetas.forEach((receta) => {
+      receta.ingredientes.forEach((ingrediente) => {
+        const precio = parseFloat(ingrediente.precio);
+        if (!isNaN(precio)) {
+          costoTotal += precio;
+        }
+      });
     });
-  });
 
-  return costoTotal;
-};
+    return costoTotal;
+  };
 
-
-  //Ejemplo para historial de presupuesto
+  // Ejemplo para historial de presupuesto
   const historialPresupuesto = [
     { mes: "17/05/2024", presupuestoAsignado: 1000, gastosReales: 850 },
     { mes: "21/06/2024", presupuestoAsignado: 1200, gastosReales: 1150 },
@@ -103,9 +99,7 @@ function UsuarioPrincipal({ onLogout }) {
     <main className="usuario-principal-container">
       <header>
         <div className="container flex items-center justify-between gap-4">
-          <Link to="/" className="logo">
-            NUTRIFIT
-          </Link>
+          <div className="logo">NUTRIFIT</div>
           <div className="nav-links flex items-center gap-4">
             <button onClick={handleLogoutClick} className="nav-link">
               <LogoutIcon className="icon" />
@@ -141,7 +135,7 @@ function UsuarioPrincipal({ onLogout }) {
           {opcionSeleccionada === "cuenta" && (
             <div>
               <h2>Administración de la cuenta</h2>
-              <br></br>
+              <br />
               <form className="formulario-cuenta" onSubmit={handleSubmit}>
                 <div className="form-group">
                   <h4>Nombre Completo</h4>
@@ -151,8 +145,8 @@ function UsuarioPrincipal({ onLogout }) {
                     value={nombreCompleto}
                     onChange={(e) => setNombreCompleto(e.target.value)}
                   />
-                  <br></br>
-                  <br></br>
+                  <br />
+                  <br />
                   <h4>Correo Electrónico</h4>
                   <input
                     type="text"
@@ -172,8 +166,8 @@ function UsuarioPrincipal({ onLogout }) {
                     <option value="hombre">Hombre</option>
                     <option value="mujer">Mujer</option>
                   </select>
-                  <br></br>
-                  <br></br>
+                  <br />
+                  <br />
                   <h4>Altura</h4>
                   <input
                     type="number"
@@ -192,8 +186,8 @@ function UsuarioPrincipal({ onLogout }) {
                     value={edad}
                     onChange={(e) => setEdad(e.target.value)}
                   />
-                  <br></br>
-                  <br></br>
+                  <br />
+                  <br />
                   <h4>Peso</h4>
                   <input
                     type="number"
@@ -202,8 +196,8 @@ function UsuarioPrincipal({ onLogout }) {
                     value={peso}
                     onChange={(e) => setPeso(e.target.value)}
                   />
-                  <br></br>
-                  <br></br>
+                  <br />
+                  <br />
                 </div>
                 <button type="submit">Actualizar Datos</button>
               </form>
@@ -214,54 +208,60 @@ function UsuarioPrincipal({ onLogout }) {
               <h2>Planificación</h2>
               <br />
               <br />
-              <form
-                className="formulario-comidas"
-                onSubmit={handleRecetaSubmit}
-              >
+              <form className="formulario-comidas" onSubmit={handleRecetaSubmit}>
                 <div className="form-group">
-                  <h4>Presupuesto</h4>
+                  <h4>Nombre de la receta</h4>
+                  <input
+                    type="text"
+                    placeholder="Nombre de la receta"
+                    value={nombreReceta}
+                    onChange={(e) => setNombreReceta(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <h4>Ingredientes</h4>
                   {ingredientes.map((ingrediente, index) => (
                     <div key={index} className="ingrediente">
                       <input
                         type="text"
-                        placeholder="Ingrese el Presupuesto"
+                        placeholder="Nombre del ingrediente"
                         value={ingrediente.nombre}
                         onChange={(e) =>
-                          handleIngredienteChange(
-                            index,
-                            "nombre",
-                            e.target.value
-                          )
+                          handleIngredienteChange(index, "nombre", e.target.value)
+                        }
+                      />
+                      <input
+                        type="text"
+                        placeholder="Cantidad"
+                        value={ingrediente.cantidad}
+                        onChange={(e) =>
+                          handleIngredienteChange(index, "cantidad", e.target.value)
                         }
                       />
                     </div>
                   ))}
                 </div>
-                <button type="submit">Generar</button>
+                <button type="submit">Agregar Receta</button>
               </form>
-              <br />
-              <br />
-              <h3>Recetas</h3>
-              <ul className="recetas-lista">
-                {recetas.map((receta, index) => (
-                  <li key={index}>
-                    <h4>{receta.nombreReceta}</h4>
-                    <div className="ingredientes-container">
-                      {receta.ingredientes.map((ingrediente, idx) => (
-                        <div key={idx} className="ingrediente-receta">
-                          <p>{ingrediente.nombre}</p>
-                          <p>{ingrediente.cantidad} gr</p>
-                          <p>S/. {ingrediente.precio}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </li>
-                ))}
-                <h3>
-                  
-                  
-                </h3>
-              </ul>
+              <div>
+                <h3>Recetas</h3>
+                <ul className="recetas-lista">
+                  {recetas.map((receta, index) => (
+                    <li key={index}>
+                      <h4>{receta.nombreReceta}</h4>
+                      <div className="ingredientes-container">
+                        {receta.ingredientes.map((ingrediente, idx) => (
+                          <div key={idx} className="ingrediente-receta">
+                            <p>{ingrediente.nombre}</p>
+                            <p>{ingrediente.cantidad} gr</p>
+                            {/* Aquí debería mostrarse el costo si lo tienes */}
+                          </div>
+                        ))}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
 
