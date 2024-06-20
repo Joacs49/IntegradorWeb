@@ -219,15 +219,6 @@ function UsuarioPrincipal({ onLogout }) {
                 onSubmit={handleRecetaSubmit}
               >
                 <div className="form-group">
-                  <h4>Nombre de la Receta</h4>
-                  <input
-                    type="text"
-                    placeholder="Nombre de la Receta"
-                    value={nombreReceta}
-                    onChange={(e) => setNombreReceta(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
                   <h4>Presupuesto</h4>
                   {ingredientes.map((ingrediente, index) => (
                     <div key={index} className="ingrediente">
