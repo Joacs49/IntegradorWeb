@@ -35,7 +35,7 @@ function Principal() {
         <div className="feature-card">
           <div className="icon-title">
             <LeafIcon className="icon leaf-icon" />
-            <h3 classNa me="feature-heading">Alimentación Saludable</h3>
+            <h3 className="feature-heading">Alimentación Saludable</h3>
           </div>
           <p className="feature-description">
             Descubre recetas nutritivas y deliciosas que te ayudarán a mantener una dieta equilibrada y saludable.
