@@ -210,38 +210,15 @@ function UsuarioPrincipal({ onLogout }) {
               <br />
               <form className="formulario-comidas" onSubmit={handleRecetaSubmit}>
                 <div className="form-group">
-                  <h4>Nombre de la receta</h4>
+                  <h4>Presupuesto</h4>
                   <input
                     type="text"
-                    placeholder="Nombre de la receta"
+                    placeholder="Ingrese el presupuesto"
                     value={nombreReceta}
                     onChange={(e) => setNombreReceta(e.target.value)}
                   />
                 </div>
-                <div className="form-group">
-                  <h4>Ingredientes</h4>
-                  {ingredientes.map((ingrediente, index) => (
-                    <div key={index} className="ingrediente">
-                      <input
-                        type="text"
-                        placeholder="Nombre del ingrediente"
-                        value={ingrediente.nombre}
-                        onChange={(e) =>
-                          handleIngredienteChange(index, "nombre", e.target.value)
-                        }
-                      />
-                      <input
-                        type="text"
-                        placeholder="Cantidad"
-                        value={ingrediente.cantidad}
-                        onChange={(e) =>
-                          handleIngredienteChange(index, "cantidad", e.target.value)
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-                <button type="submit">Agregar Receta</button>
+                <button type="submit">Generar</button>
               </form>
               <div>
                 <h3>Recetas</h3>
