@@ -14,10 +14,10 @@
 
 .sidebar {
   width: 100%;
-  max-width: 200px; /* Ajusta el ancho máximo de la barra lateral */
+  max-width: 200px;
   background-color: #fff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-right: 20px; /* Espacio a la derecha de la barra lateral */
+  margin-right: 20px; 
 }
 
 .sidebar ul {
@@ -42,7 +42,7 @@
   padding: 2rem;
   background-color: #fff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px; /* Espacio debajo del contenido principal */
+  margin-bottom: 20px; 
 }
 
 .cuenta-form {
@@ -84,9 +84,10 @@
   cursor: pointer;
   border-radius: 0.25rem;
   transition: background-color 0.3s ease;
-  height: 40px;
+  height: 50px;
   width: 150px;
 }
+
 
 .formulario-cuenta button:hover {
   background-color: #4a5568;
@@ -151,9 +152,9 @@ button:hover {
 .recetas-lista {
   list-style: none;
   padding: 0;
-  background-color: #ffffff; /* Color de fondo del contenedor */
-  border: 1px solid #cccccc; /* Borde alrededor del contenedor */
-  border-radius: 8px; /* Bordes redondeados */
+  background-color: #ffffff; 
+  border: 1px solid #cccccc; 
+  border-radius: 8px; 
   padding: 20px;
 }
 

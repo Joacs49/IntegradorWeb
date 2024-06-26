@@ -1,99 +1,70 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
+import axios from "axios";
 import "../css/usuarioPrincipal.css";
 import { LogoutIcon } from "../components/componenteIcon";
+import AdministracionCuenta from "../components/componenteCuenta";
+import PlanificacionRecetas from "../components/componenteRecetas";
+import HistorialPresupuesto from "../components/componentePresupuesto";
 
 function UsuarioPrincipal({ onLogout }) {
   const [opcionSeleccionada, setOpcionSeleccionada] = useState("cuenta");
-  const [nombreCompleto, setNombreCompleto] = useState("");
-  const [correoElectronico, setCorreoElectronico] = useState("");
-  const [genero, setGenero] = useState("hombre");
-  const [altura, setAltura] = useState("");
-  const [edad, setEdad] = useState("");
-  const [peso, setPeso] = useState("");
-  const [contraseña, setContraseña] = useState("");
-  const [presupuesto, setPresupuesto] = useState("");
-
+  const [usuario, setUsuario] = useState(null);
   const [recetas, setRecetas] = useState([]);
-  const [nombreReceta, setNombreReceta] = useState("");
-  const [ingredientes, setIngredientes] = useState([{ nombre: "", cantidad: "" }]);
+  const [historialPresupuesto, setHistorialPresupuesto] = useState([]);
+  const location = useLocation();
+
+  const params = new URLSearchParams(location.search);
+  const correoParam = params.get('correo');
+  const claveParam = params.get('clave');
+
+  useEffect(() => {
+    const obtenerDatosUsuario = async () => {
+      try {
+        if (!correoParam || !claveParam) {
+          console.error('Correo y clave son obligatorios');
+          return;
+        }
+        
+        const response = await axios.get(`http://localhost:8090/api/usuario/${correoParam}?clave=${claveParam}`);
+        if (response.status === 200) {
+          setUsuario(response.data);
+          setRecetas(response.data.recetas); // Asumiendo que las recetas están en la respuesta del usuario
+          setHistorialPresupuesto(response.data.historialPresupuesto); // Asumiendo que el historial de presupuesto está en la respuesta del usuario
+        } else {
+          console.error('Error al obtener los datos del usuario');
+        }
+      } catch (error) {
+        console.error('Error en la solicitud', error);
+      }
+    };
+
+    if (!usuario && correoParam && claveParam) {
+      obtenerDatosUsuario();
+    }
+  }, [correoParam, claveParam, usuario]);
 
   const handleOpcionClick = (opcion) => {
     setOpcionSeleccionada(opcion);
   };
 
   const handleLogoutClick = () => {
-    if (typeof onLogout === "function") {
-      onLogout();
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Lógica a implementar para actualizar los datos
-    console.log("Datos actualizados:", {
-      nombreCompleto,
-      correoElectronico,
-      genero,
-      altura,
-      edad,
-      peso,
-      contraseña,
-    });
-    // Lógica para enviar los datos actualizados al servidor
-    alert("Datos actualizados correctamente");
-  };
-
-  const handleRecetaSubmit = (e) => {
-    e.preventDefault();
-
-    const ingredientesReceta = [...ingredientes];
-
-    const nuevaReceta = {
-      nombreReceta,
-      ingredientes: ingredientesReceta
-    };
-
-    setRecetas([...recetas, nuevaReceta]);
-    setNombreReceta('');
-    setIngredientes([{ nombre: '', cantidad: '', precio: '' }]);
-
-    alert('Receta añadida correctamente');
-  };
-
-  const handleIngredienteChange = (index, field, value) => {
-    const newIngredientes = [...ingredientes];
-    newIngredientes[index][field] = value;
-    setIngredientes(newIngredientes);
-  };
-
-  const handleAddIngrediente = () => {
-    setIngredientes([
-      ...ingredientes,
-      { nombre: "", cantidad: "", precio: "" },
-    ]);
-  };
-
-  const calcularCostoTotal = () => {
-    let costoTotal = 0;
-
-    recetas.forEach((receta) => {
-      receta.ingredientes.forEach((ingrediente) => {
-        const precio = parseFloat(ingrediente.precio);
-        if (!isNaN(precio)) {
-          costoTotal += precio;
+    const token = localStorage.getItem("token");
+    axios.get("http://localhost:8090/api/logout", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(response => {
+        console.log("Sesión cerrada:", response.data);
+        if (typeof onLogout === "function") {
+          onLogout();
         }
+      })
+      .catch(error => {
+        console.error("Error al cerrar sesión:", error);
       });
-    });
-
-    return costoTotal;
   };
-
-  // Ejemplo para historial de presupuesto
-  const historialPresupuesto = [
-    { mes: "17/05/2024", presupuestoAsignado: 1000, gastosReales: 850 },
-    { mes: "21/06/2024", presupuestoAsignado: 1200, gastosReales: 1150 },
-  ];
 
   return (
     <main className="usuario-principal-container">
@@ -111,162 +82,21 @@ function UsuarioPrincipal({ onLogout }) {
       <div className="main-content">
         <div className="sidebar">
           <ul>
-            <li
-              className={opcionSeleccionada === "cuenta" ? "active" : ""}
-              onClick={() => handleOpcionClick("cuenta")}
-            >
+            <li className={opcionSeleccionada === "cuenta" ? "active" : ""} onClick={() => handleOpcionClick("cuenta")}>
               Administración de la cuenta
             </li>
-            <li
-              className={opcionSeleccionada === "comidas" ? "active" : ""}
-              onClick={() => handleOpcionClick("comidas")}
-            >
+            <li className={opcionSeleccionada === "comidas" ? "active" : ""} onClick={() => handleOpcionClick("comidas")}>
               Planificación de Recetas
             </li>
-            <li
-              className={opcionSeleccionada === "presupuesto" ? "active" : ""}
-              onClick={() => handleOpcionClick("presupuesto")}
-            >
+            <li className={opcionSeleccionada === "presupuesto" ? "active" : ""} onClick={() => handleOpcionClick("presupuesto")}>
               Historial de presupuesto
             </li>
           </ul>
         </div>
         <div className="content">
-          {opcionSeleccionada === "cuenta" && (
-            <div>
-              <h2>Administración de la cuenta</h2>
-              <br />
-              <form className="formulario-cuenta" onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <h4>Nombre Completo</h4>
-                  <input
-                    type="text"
-                    placeholder="Nombre Completo"
-                    value={nombreCompleto}
-                    onChange={(e) => setNombreCompleto(e.target.value)}
-                  />
-                  <br />
-                  <br />
-                  <h4>Correo Electrónico</h4>
-                  <input
-                    type="text"
-                    placeholder="Correo Electrónico"
-                    value={correoElectronico}
-                    onChange={(e) => setCorreoElectronico(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <h4>Género</h4>
-                  <select
-                    id="genero"
-                    name="genero"
-                    value={genero}
-                    onChange={(e) => setGenero(e.target.value)}
-                  >
-                    <option value="hombre">Hombre</option>
-                    <option value="mujer">Mujer</option>
-                  </select>
-                  <br />
-                  <br />
-                  <h4>Altura</h4>
-                  <input
-                    type="number"
-                    placeholder="Altura (cm)"
-                    min="0"
-                    value={altura}
-                    onChange={(e) => setAltura(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <h4>Edad</h4>
-                  <input
-                    type="number"
-                    placeholder="Edad"
-                    min="0"
-                    value={edad}
-                    onChange={(e) => setEdad(e.target.value)}
-                  />
-                  <br />
-                  <br />
-                  <h4>Peso</h4>
-                  <input
-                    type="number"
-                    placeholder="Peso (kg)"
-                    min="0"
-                    value={peso}
-                    onChange={(e) => setPeso(e.target.value)}
-                  />
-                  <br />
-                  <br />
-                </div>
-                <button type="submit">Actualizar Datos</button>
-              </form>
-            </div>
-          )}
-          {opcionSeleccionada === "comidas" && (
-            <div>
-              <h2>Planificación</h2>
-              <br />
-              <br />
-              <form className="formulario-comidas" onSubmit={handleRecetaSubmit}>
-                <div className="form-group">
-                  <h4>Presupuesto</h4>
-                  <input
-                    type="text"
-                    placeholder="Ingrese el presupuesto"
-                    value={nombreReceta}
-                    onChange={(e) => setNombreReceta(e.target.value)}
-                  />
-                </div>
-                <button type="submit">Generar</button>
-              </form>
-              <div>
-                <h3>Recetas</h3>
-                <ul className="recetas-lista">
-                  {recetas.map((receta, index) => (
-                    <li key={index}>
-                      <h4>{receta.nombreReceta}</h4>
-                      <div className="ingredientes-container">
-                        {receta.ingredientes.map((ingrediente, idx) => (
-                          <div key={idx} className="ingrediente-receta">
-                            <p>{ingrediente.nombre}</p>
-                            <p>{ingrediente.cantidad} gr</p>
-                            {/* Aquí debería mostrarse el costo si lo tienes */}
-                          </div>
-                        ))}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-
-          {opcionSeleccionada === "presupuesto" && (
-            <div>
-              <h2>Historial de Presupuesto</h2>
-              <div className="historial-presupuesto">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Fecha</th>
-                      <th>Presupuesto Asignado (S/.)</th>
-                      <th>Gastos Reales (S/.)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {historialPresupuesto.map((item, index) => (
-                      <tr key={index}>
-                        <td>{item.mes}</td>
-                        <td>{item.presupuestoAsignado}</td>
-                        <td>{item.gastosReales}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+          {opcionSeleccionada === "cuenta" && usuario && <AdministracionCuenta usuario={usuario} />}
+          {opcionSeleccionada === "comidas" && usuario && <PlanificacionRecetas recetas={recetas} setRecetas={setRecetas} />}
+          {opcionSeleccionada === "presupuesto" && usuario && <HistorialPresupuesto historialPresupuesto={historialPresupuesto} />}
         </div>
       </div>
     </main>
