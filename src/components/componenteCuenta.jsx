@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from "axios";
 
 function AdministracionCuenta({ usuario }) {
+  const [idUsuario] = useState(usuario.idUsuario); 
   const [nombre, setNombre] = useState(usuario.nombre);
   const [correo, setCorreo] = useState(usuario.correo);
   const [genero, setGenero] = useState(usuario.genero);
@@ -12,10 +13,14 @@ function AdministracionCuenta({ usuario }) {
   const [editandoCuenta, setEditandoCuenta] = useState(false);
   const [isValid, setIsValid] = useState(true);
 
-  const handleChange = (event) => {
+  const handleChangeCorreo = (event) => {
     const { value } = event.target;
     setCorreo(value);
     setIsValid(value.endsWith('@gmail.com'));
+  };
+
+  const handleChangeClave = (event) => {
+    setClave(event.target.value);
   };
 
   const handleGuardarCambios = async (e) => {
@@ -27,7 +32,7 @@ function AdministracionCuenta({ usuario }) {
     }
 
     try {
-      const response = await axios.put(`http://localhost:8090/api/usuario/${usuario.idUsuario}`, {
+      const response = await axios.put(`http://localhost:8090/api/usuario/${idUsuario}`, {
         nombre,
         correo,
         genero,
@@ -58,7 +63,7 @@ function AdministracionCuenta({ usuario }) {
         </div>
         <div className="form-group">
           <h4>Correo Electrónico</h4>
-          <input type="text" placeholder="Correo Electrónico" value={correo} onChange={handleChange} disabled={!editandoCuenta} required/>
+          <input type="text" placeholder="Correo Electrónico" value={correo} onChange={handleChangeCorreo} disabled={!editandoCuenta} required/>
           {!isValid && <p style={{ color: 'red' }}>Solo se permiten correos de @gmail.com</p>}
         </div>
         <div className="form-group">
@@ -82,12 +87,14 @@ function AdministracionCuenta({ usuario }) {
         </div>
         <div className="form-group">
           <h4>Clave</h4>
-          <input type="text" placeholder="Contraseña" value={clave} onChange={(e) => setClave(e.target.value)} disabled={!editandoCuenta} required/>
+          <input type="text" placeholder="Contraseña" value={clave} onChange={handleChangeClave} disabled={!editandoCuenta} required/>
         </div>
-        <div className="form-group"></div>
         <div className="form-group">
-        {!editandoCuenta && <button type="button" onClick={() => setEditandoCuenta(true)}>Realizar Cambios</button>}
-        {editandoCuenta && <button type="submit">Guardar Cambios</button>}
+          <input type="hidden" value={idUsuario} />
+        </div>
+        <div className="form-group">
+          {!editandoCuenta && <button type="button" onClick={() => setEditandoCuenta(true)}>Realizar Cambios</button>}
+          {editandoCuenta && <button type="submit">Guardar Cambios</button>}
         </div>
       </form>
     </div>
