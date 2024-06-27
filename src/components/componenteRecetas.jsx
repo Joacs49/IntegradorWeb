@@ -21,15 +21,6 @@ function PlanificacionRecetas({ recetas, setRecetas }) {
     alert("Receta añadida correctamente");
   };
 
-  const handleIngredienteChange = (index, field, value) => {
-    const newIngredientes = [...ingredientes];
-    newIngredientes[index][field] = value;
-    setIngredientes(newIngredientes);
-  };
-
-  const handleAddIngrediente = () => {
-    setIngredientes([...ingredientes, { nombre: "", cantidad: "" }]);
-  };
 
   return (
     <div>
@@ -38,46 +29,13 @@ function PlanificacionRecetas({ recetas, setRecetas }) {
       <br />
       <form className="formulario-comidas" onSubmit={handleRecetaSubmit}>
         <div className="form-group">
-          <h4>Nombre de la Receta</h4>
-          <input
-            type="text"
-            placeholder="Ingrese el nombre de la receta"
-            value={nombreReceta}
-            onChange={(e) => setNombreReceta(e.target.value)}
-          />
+          <button type="submit">Generar Receta</button>
         </div>
-        <div className="form-group">
-          <h4>Ingredientes</h4>
-          {ingredientes.map((ingrediente, index) => (
-            <div key={index} className="ingrediente-inputs">
-              <input
-                type="text"
-                placeholder={`Nombre del ingrediente ${index + 1}`}
-                value={ingrediente.nombre}
-                onChange={(e) =>
-                  handleIngredienteChange(index, "nombre", e.target.value)
-                }
-              />
-              <input
-                type="number"
-                placeholder="Cantidad (gr)"
-                value={ingrediente.cantidad}
-                onChange={(e) =>
-                  handleIngredienteChange(index, "cantidad", e.target.value)
-                }
-              />
-            </div>
-          ))}
-          <button type="button" onClick={handleAddIngrediente}>
-            Agregar Ingrediente
-          </button>
-        </div>
-        <button type="submit">Generar Receta</button>
       </form>
       <div>
         <h3>Recetas</h3>
         <ul className="recetas-lista">
-          {recetas.map((receta, index) => (
+          {recetas && recetas.map((receta, index) => (
             <li key={index}>
               <h4>{receta.nombreReceta}</h4>
               <div className="ingredientes-container">
@@ -85,7 +43,6 @@ function PlanificacionRecetas({ recetas, setRecetas }) {
                   <div key={idx} className="ingrediente-receta">
                     <p>{ingrediente.nombre}</p>
                     <p>{ingrediente.cantidad} gr</p>
-                    {/* Aquí debería mostrarse el costo si lo tienes */}
                   </div>
                 ))}
               </div>

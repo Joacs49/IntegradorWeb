@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 function Register({ setIsLogin }) {
   const [formValues, setFormValues] = useState({
@@ -12,9 +11,9 @@ function Register({ setIsLogin }) {
     peso: '',
     clave: ''
   });
+
   const [correoEnUso, setCorreoEnUso] = useState(false);
   const [correoFormatoIncorrecto, setCorreoFormatoIncorrecto] = useState(false);
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,14 +44,21 @@ function Register({ setIsLogin }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:8090/api/register', { nombre, correo, genero, altura, edad, peso, clave });
-      if (response.status === 200) {
-        console.log('Registro exitoso');
-        setFormValues({ nombre: '', correo: '', genero: 'hombre', altura: '', edad: '', peso: '', clave: '' });
-        navigate(`/usuarioPrincipal?correo=${correo}&clave=${clave}`);
-      } else {
-        console.log('Error en el registro');
-      }
+      await axios.post('http://localhost:8090/api/register', {
+        nombre, correo, genero, altura, edad, peso, clave
+      });
+
+      console.log('Registro exitoso');
+      setFormValues({
+        nombre: '',
+        correo: '',
+        genero: 'hombre',
+        altura: '',
+        edad: '',
+        peso: '',
+        clave: ''
+      });
+
     } catch (error) {
       console.error('Error al registrarse', error);
       if (error.response && error.response.status === 409) {
@@ -64,12 +70,10 @@ function Register({ setIsLogin }) {
   return (
     <form className="formulario_register" onSubmit={handleSubmit}>
       <h2>Registrarse</h2>
-
-        <input type="text" name="nombre" value={formValues.nombre} onChange={handleChange} placeholder="Nombre Completo" required />
-        <input type="text" name="correo" value={formValues.correo} onChange={handleChange} placeholder="Correo Electrónico" required />
-        {correoEnUso && <p style={{ color: 'red' }}>El correo electrónico ya está en uso</p>}
-        {correoFormatoIncorrecto && <p style={{ color: 'red' }}>Solo se permiten correos de @gmail.com</p>}
-
+      <input type="text" name="nombre" value={formValues.nombre} onChange={handleChange} placeholder="Nombre Completo" required />
+      <input type="text" name="correo" value={formValues.correo} onChange={handleChange} placeholder="Correo Electrónico" required />
+      {correoEnUso && <p style={{ color: 'red' }}>El correo electrónico ya está en uso</p>}
+      {correoFormatoIncorrecto && <p style={{ color: 'red' }}>Solo se permiten correos de @gmail.com</p>}
       <div className="group">
         <select id="genero" name="genero" value={formValues.genero} onChange={handleChange}>
           <option value="hombre">Hombre</option>
