@@ -12,11 +12,13 @@ function AdministracionCuenta({ usuario }) {
   const [clave, setClave] = useState(usuario.clave);
   const [editandoCuenta, setEditandoCuenta] = useState(false);
   const [isValid, setIsValid] = useState(true);
+  const [errorCorreoExistente, setErrorCorreoExistente] = useState(false);
 
   const handleChangeCorreo = (event) => {
     const { value } = event.target;
     setCorreo(value);
     setIsValid(value.endsWith('@gmail.com'));
+    setErrorCorreoExistente(false); // Resetear el mensaje de error al cambiar el correo
   };
 
   const handleChangeClave = (event) => {
@@ -48,6 +50,9 @@ function AdministracionCuenta({ usuario }) {
         console.error('Error al guardar los cambios');
       }
     } catch (error) {
+      if (error.response && error.response.status === 409) {
+        setErrorCorreoExistente(true); // Mostrar mensaje de correo existente si el servidor devuelve un 409
+      }
       console.error('Error en la solicitud', error);
     }
   };
@@ -64,6 +69,7 @@ function AdministracionCuenta({ usuario }) {
         <div className="form-group">
           <h4>Correo Electrónico</h4>
           <input type="text" placeholder="Correo Electrónico" value={correo} onChange={handleChangeCorreo} disabled={!editandoCuenta} required/>
+          {errorCorreoExistente && <p style={{ color: 'red' }}>El correo electrónico ya está en uso</p>}
           {!isValid && <p style={{ color: 'red' }}>Solo se permiten correos de @gmail.com</p>}
         </div>
         <div className="form-group">
@@ -88,9 +94,6 @@ function AdministracionCuenta({ usuario }) {
         <div className="form-group">
           <h4>Clave</h4>
           <input type="text" placeholder="Contraseña" value={clave} onChange={handleChangeClave} disabled={!editandoCuenta} required/>
-        </div>
-        <div className="form-group">
-          <input type="hidden" value={idUsuario} />
         </div>
         <div className="form-group">
           {!editandoCuenta && <button type="button" onClick={() => setEditandoCuenta(true)}>Realizar Cambios</button>}
