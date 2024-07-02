@@ -18,7 +18,7 @@ function AdministracionCuenta({ usuario }) {
     const { value } = event.target;
     setCorreo(value);
     setIsValid(value.endsWith('@gmail.com'));
-    setErrorCorreoExistente(false); // Resetear el mensaje de error al cambiar el correo
+    setErrorCorreoExistente(false); 
   };
 
   const handleChangeClave = (event) => {
@@ -96,6 +96,9 @@ function AdministracionCuenta({ usuario }) {
           <input type="text" placeholder="Contraseña" value={clave} onChange={handleChangeClave} disabled={!editandoCuenta} required/>
         </div>
         <div className="form-group">
+          <input type="hidden" value={idUsuario} />
+        </div>
+        <div className="form-group">
           {!editandoCuenta && <button type="button" onClick={() => setEditandoCuenta(true)}>Realizar Cambios</button>}
           {editandoCuenta && <button type="submit">Guardar Cambios</button>}
         </div>
@@ -105,3 +108,4 @@ function AdministracionCuenta({ usuario }) {
 }
 
 export default AdministracionCuenta;
+

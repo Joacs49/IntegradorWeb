@@ -219,6 +219,31 @@ button:hover {
   background-color: #ddd;
 }
 
+.recetas-columnas {
+  display: flex;
+  justify-content: space-between;
+}
+
+.recetas-columna {
+  flex: 1;
+  list-style: none;
+  padding: 0;
+}
+
+.recetas-columna li {
+  margin-bottom: 20px;
+}
+
+.ingredientes-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.ingrediente-receta {
+  display: flex;
+  justify-content: space-between;
+}
+
 @media (min-width: 768px) {
   .main-content {
     flex-direction: row;
