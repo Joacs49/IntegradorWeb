@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from "axios";
 
-function AdministracionCuenta({ usuario }) {
+function AdministracionCuenta({ usuario, onIdUsuarioChange }) {
   const [idUsuario] = useState(usuario.idUsuario); 
   const [nombre, setNombre] = useState(usuario.nombre);
   const [correo, setCorreo] = useState(usuario.correo);
@@ -46,6 +46,9 @@ function AdministracionCuenta({ usuario }) {
       if (response.status === 200) {
         console.log('Cambios guardados exitosamente');
         setEditandoCuenta(false);
+
+        // Actualizar el idUsuario en el componente padre
+        onIdUsuarioChange(idUsuario);
       } else {
         console.error('Error al guardar los cambios');
       }
@@ -96,7 +99,7 @@ function AdministracionCuenta({ usuario }) {
           <input type="text" placeholder="Contraseña" value={clave} onChange={handleChangeClave} disabled={!editandoCuenta} required/>
         </div>
         <div className="form-group">
-          <input type="hidden" value={idUsuario} />
+          <input type="hidden" value={idUsuario}  disabled/>
         </div>
         <div className="form-group">
           {!editandoCuenta && <button type="button" onClick={() => setEditandoCuenta(true)}>Realizar Cambios</button>}
@@ -108,4 +111,3 @@ function AdministracionCuenta({ usuario }) {
 }
 
 export default AdministracionCuenta;
-

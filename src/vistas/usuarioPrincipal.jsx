@@ -10,7 +10,6 @@ import HistorialPresupuesto from "../components/componentePresupuesto";
 function UsuarioPrincipal({ onLogout }) {
   const [opcionSeleccionada, setOpcionSeleccionada] = useState("cuenta");
   const [usuario, setUsuario] = useState(null);
-  const [recetas, setRecetas] = useState([]);
   const [historialPresupuesto, setHistorialPresupuesto] = useState([]);
   const location = useLocation();
 
@@ -29,7 +28,6 @@ function UsuarioPrincipal({ onLogout }) {
         const response = await axios.get(`http://localhost:8090/api/usuario/${correoParam}?clave=${claveParam}`);
         if (response.status === 200) {
           setUsuario(response.data);
-          setRecetas(response.data.recetas); // Asumiendo que las recetas están en la respuesta del usuario
           setHistorialPresupuesto(response.data.historialPresupuesto); // Asumiendo que el historial de presupuesto está en la respuesta del usuario
         } else {
           console.error('Error al obtener los datos del usuario');
@@ -95,7 +93,7 @@ function UsuarioPrincipal({ onLogout }) {
         </div>
         <div className="content">
           {opcionSeleccionada === "cuenta" && usuario && <AdministracionCuenta usuario={usuario} />}
-          {opcionSeleccionada === "comidas" && usuario && <PlanificacionRecetas recetas={recetas} setRecetas={setRecetas} />}
+          {opcionSeleccionada === "comidas" && usuario && <PlanificacionRecetas idUsuario={usuario.idUsuario} />}
           {opcionSeleccionada === "presupuesto" && usuario && <HistorialPresupuesto historialPresupuesto={historialPresupuesto} />}
         </div>
       </div>

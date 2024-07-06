@@ -1,90 +1,85 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-function PlanificacionRecetas() {
-  const [recetas, setRecetas] = useState([]);
-  const [nombreReceta, setNombreReceta] = useState("");
-  const [ingredientes, setIngredientes] = useState([{ nombre: "", cantidad: "" }]);
+function PlanificacionRecetas({ idUsuario }) {
+  const [recomendaciones, setRecomendaciones] = useState([]);
+  const [platosSeleccionados, setPlatosSeleccionados] = useState([]);
 
-  const obtenerRecetas = () => {
-    axios.get("http://localhost:8090/api/recetas$/{idUsuario}")
-      .then(response => {
-        setRecetas(response.data);
-      })
-      .catch(error => {
-        console.error("Error al obtener recetas:", error);
-      });
+  
+  const obtenerRecomendaciones = async (idUsuario) => {
+    try {
+      const response = await axios.get(`http://localhost:8090/api/plandecomida/recomendaciones/${idUsuario}`);
+      console.log("Respuesta del servidor:", response.data); // Verificar la respuesta completa del servidor
+      setRecomendaciones(response.data.split("\n"));
+    } catch (error) {
+      console.error("Error al obtener las recomendaciones:", error);
+    }
   };
 
-  const handleRecetaSubmit = (e) => {
-    e.preventDefault();
-
-    const ingredientesReceta = [...ingredientes];
-
-    const nuevaReceta = {
-      nombreReceta,
-      ingredientes: ingredientesReceta,
-    };
-
-    // Enviar la nueva receta al backend
-    axios.post("http://localhost:8090/api/recetas", nuevaReceta)
-      .then(response => {
-        obtenerRecetas(); // Actualizar la lista de recetas después de añadir una nueva
-        setNombreReceta("");
-        setIngredientes([{ nombre: "", cantidad: "" }]);
-        alert("Receta añadida correctamente");
-      })
-      .catch(error => {
-        console.error("Error al añadir receta:", error);
-      });
+  const handleRecomendacionesClick = async (idUsuario) => {
+    await obtenerRecomendaciones(idUsuario);
   };
 
-  const renderRecetasEnColumnas = () => {
-    const columnas = [[], [], []];
+  const handleSeleccionar = (nombrePlato) => {
+    if (platosSeleccionados.includes(nombrePlato)) {
+      // Si ya está seleccionado, lo quitamos de la lista de seleccionados
+      setPlatosSeleccionados(platosSeleccionados.filter((plato) => plato !== nombrePlato));
+    } else {
+      // Si no está seleccionado, lo agregamos a la lista de seleccionados
+      setPlatosSeleccionados([...platosSeleccionados, nombrePlato]);
+    }
+  };
 
-    recetas.forEach((receta, index) => {
-      columnas[index % 3].push(
-        <li key={index}>
-          <h4>{receta.nombreReceta}</h4>
-          <div className="ingredientes-container">
-            {receta.ingredientes.map((ingrediente, idx) => (
-              <div key={idx} className="ingrediente-receta">
-                <p>{ingrediente.nombre}</p>
-                <p>{ingrediente.cantidad} gr</p>
-              </div>
-            ))}
-          </div>
-        </li>
-      );
-    });
-
-    return columnas.map((columna, idx) => (
-      <ul key={idx} className="recetas-columna">
-        {columna}
-      </ul>
-    ));
+  const handleDescartar = (nombrePlato) => {
+    // Quitar el plato de la lista de seleccionados
+    setPlatosSeleccionados(platosSeleccionados.filter((plato) => plato !== nombrePlato));
   };
 
   return (
-    <div>
+    <div className="planificacion-container">
       <h2>Planificación</h2>
       <br />
       <br />
-      <form className="formulario-comidas" onSubmit={handleRecetaSubmit}>
-        <div className="form-group">
-          <input
-            type="text"
-            placeholder="Nombre de la receta"
-            value={nombreReceta}
-            onChange={(e) => setNombreReceta(e.target.value)}
-          />
-          <button type="submit">Generar Receta</button>
-        </div>
-      </form>
-      <div>
-        <h3>Recetas</h3>
-        <div className="recetas-columnas">
-          {recetas.length > 0 ? renderRecetasEnColumnas() : <p>No hay recetas aún</p>}
+      <div className="recomendaciones-section">
+        <h3>Recomendaciones IMC</h3>
+        <button onClick={() => handleRecomendacionesClick(idUsuario)}>
+          Obtener Recomendaciones IMC
+        </button>
+        <br />
+        <br />
+        <div className="recomendaciones-list">
+          {recomendaciones.length > 0 ? (
+            recomendaciones.map((recomendacion, index) => {
+              const [nombrePlato, ingredientesYPrecio] = recomendacion.split(":");
+              const [ingredientes, precioTotal] = ingredientesYPrecio.split("(Precio total: ");
+              const ingredientesList = ingredientes.split(",").map((ingrediente) => ingrediente.trim());
+              const precio = precioTotal ? precioTotal.replace(")", "").trim() : "";
+
+              return (
+                <div key={index} className={`plato-box ${platosSeleccionados.includes(nombrePlato) ? "seleccionado" : ""}`}>
+                  <div className="plato-header">
+                    <h4>{nombrePlato}</h4>
+                    {precio && <span className="plato-precio">{`(Precio total: ${precio})`}</span>}
+                  </div>
+                  <ul>
+                    {ingredientesList.map((ingrediente, i) => (
+                      <li key={i}>{ingrediente}</li>
+                    ))}
+                  </ul>
+                  <div className="botones-bottom">
+                    <button className="boton-seleccionar" onClick={() => handleSeleccionar(nombrePlato)}>
+                      Seleccionar
+                    </button>
+                    <button className="boton-descartar" onClick={() => handleDescartar(nombrePlato)}>
+                      Descartar
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <p>No hay recomendaciones disponibles</p>
+          )}
         </div>
       </div>
     </div>

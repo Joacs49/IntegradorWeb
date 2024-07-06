@@ -219,21 +219,6 @@ button:hover {
   background-color: #ddd;
 }
 
-.recetas-columnas {
-  display: flex;
-  justify-content: space-between;
-}
-
-.recetas-columna {
-  flex: 1;
-  list-style: none;
-  padding: 0;
-}
-
-.recetas-columna li {
-  margin-bottom: 20px;
-}
-
 .ingredientes-container {
   display: flex;
   flex-direction: column;
@@ -242,6 +227,128 @@ button:hover {
 .ingrediente-receta {
   display: flex;
   justify-content: space-between;
+}
+
+.planificacion-container {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+}
+
+.recomendaciones-section {
+  margin-bottom: 20px;
+}
+
+.recomendaciones-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.planificacion-container {
+  margin: 20px;
+  padding: 20px;
+  border: none;
+  background-color: #ffffff; /* Fondo blanco */
+
+}
+
+.recomendaciones-section {
+  margin-bottom: 20px;
+}
+
+.recomendaciones-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.plato-box {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  width: calc(33.33% - 20px); /* Para mostrar tres columnas en una fila */
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+}
+
+.plato-box h4 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.plato-box .plato-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.plato-box .plato-precio {
+  font-size: 14px;
+  color: #555;
+}
+
+.plato-box ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.plato-box ul li {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.botones-bottom {
+  margin-top: auto; /* Empuja los botones hacia abajo */
+  display: flex;
+  justify-content: space-around; /* Distribuye los botones equitativamente */
+}
+
+.boton-descartar {
+  background-color: #e24a4a; /* Color rojo */
+  color: #ffffff; /* Texto blanco */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.boton-descartar:hover {
+  background-color: #e21e1e;
+}
+
+.plato-box.seleccionado {
+  background-color: #4caf50; /* Verde seleccionado */
+}
+
+.botones-bottom button {
+  padding: 10px 10px;
+  margin-top: 20px;
+}
+
+@media (max-width: 480px) {
+  .plato-box {
+    width: calc(100% - 20px); /* Para mostrar una columna en una fila */
+  }
+}
+
+@media (max-width: 1100px) {
+  .plato-box {
+    width: calc(50% - 20px);
+  }
+  
+  .botones-bottom {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .botones-bottom button {
+    width: 100%;
+    margin-top: 10px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -274,4 +381,32 @@ button:hover {
     padding: 1rem;
     margin-left: 0;
   }
+
+  .planificacion-container {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+}
+
+.recomendaciones-section {
+  margin-bottom: 20px;
+}
+
+.recomendaciones-list {
+  padding-left: 20px;
+}
+
+.recomendaciones-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.recomendaciones-list ul li {
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
 }
