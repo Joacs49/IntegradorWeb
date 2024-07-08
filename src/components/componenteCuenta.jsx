@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-function AdministracionCuenta({ usuario, onIdUsuarioChange }) {
-  const [idUsuario] = useState(usuario.idUsuario); 
+function AdministracionCuenta({ usuario }) {
   const [nombre, setNombre] = useState(usuario.nombre);
   const [correo, setCorreo] = useState(usuario.correo);
   const [genero, setGenero] = useState(usuario.genero);
@@ -14,27 +13,36 @@ function AdministracionCuenta({ usuario, onIdUsuarioChange }) {
   const [isValid, setIsValid] = useState(true);
   const [errorCorreoExistente, setErrorCorreoExistente] = useState(false);
 
+  // Función para manejar el cambio de correo
   const handleChangeCorreo = (event) => {
     const { value } = event.target;
     setCorreo(value);
     setIsValid(value.endsWith('@gmail.com'));
-    setErrorCorreoExistente(false); 
+    setErrorCorreoExistente(false);
   };
 
+  // Función para manejar el cambio de clave
   const handleChangeClave = (event) => {
     setClave(event.target.value);
   };
 
-  const handleGuardarCambios = async (e) => {
-    e.preventDefault(); 
+  // Efecto para cargar los datos del usuario al inicio y cuando cambia el usuario
+  useEffect(() => {
+    setNombre(usuario.nombre);
+    setCorreo(usuario.correo);
+    setGenero(usuario.genero);
+    setAltura(usuario.altura);
+    setEdad(usuario.edad);
+    setPeso(usuario.peso);
+    setClave(usuario.clave);
+  }, [usuario]);
 
-    if (!isValid) {
-      console.log('No se puede guardar debido a la validación del correo');
-      return;
-    }
+  // Función para guardar los cambios
+  const handleGuardarCambios = async (e) => {
+    e.preventDefault();
 
     try {
-      const response = await axios.put(`http://localhost:8090/api/usuario/${idUsuario}`, {
+      const response = await axios.put(`http://localhost:8090/api/usuario/${usuario.idUsuario}`, {
         nombre,
         correo,
         genero,
@@ -45,10 +53,8 @@ function AdministracionCuenta({ usuario, onIdUsuarioChange }) {
       });
       if (response.status === 200) {
         console.log('Cambios guardados exitosamente');
-        setEditandoCuenta(false);
-
-        // Actualizar el idUsuario en el componente padre
-        onIdUsuarioChange(idUsuario);
+        setEditandoCuenta(false); // Finalizar la edición
+        window.location.reload(); // Recargar la página
       } else {
         console.error('Error al guardar los cambios');
       }
@@ -84,7 +90,7 @@ function AdministracionCuenta({ usuario, onIdUsuarioChange }) {
         </div>
         <div className="form-group">
           <h4>Altura</h4>
-          <input type="number" placeholder="Altura (cm)" min="1" max="3" step="0.01" value={altura} onChange={(e) => setAltura(e.target.value)} disabled={!editandoCuenta} required/>
+          <input type="number" placeholder="Altura (cm)" min="1" max="300" step="0.01" value={altura} onChange={(e) => setAltura(e.target.value)} disabled={!editandoCuenta} required/>
         </div>
         <div className="form-group">
           <h4>Edad</h4>
@@ -99,7 +105,7 @@ function AdministracionCuenta({ usuario, onIdUsuarioChange }) {
           <input type="text" placeholder="Contraseña" value={clave} onChange={handleChangeClave} disabled={!editandoCuenta} required/>
         </div>
         <div className="form-group">
-          <input type="hidden" value={idUsuario}  disabled/>
+          <input type="hidden" value={usuario.idUsuario} disabled/>
         </div>
         <div className="form-group">
           {!editandoCuenta && <button type="button" onClick={() => setEditandoCuenta(true)}>Realizar Cambios</button>}

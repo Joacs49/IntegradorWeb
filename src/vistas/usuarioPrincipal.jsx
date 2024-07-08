@@ -40,7 +40,7 @@ function UsuarioPrincipal({ onLogout }) {
     if (!usuario && correoParam && claveParam) {
       obtenerDatosUsuario();
     }
-  }, [correoParam, claveParam, usuario]);
+  }, [correoParam, claveParam, usuario]); // Asegúrate de que usuario esté en las dependencias para volver a cargar al cambiar
 
   const handleOpcionClick = (opcion) => {
     setOpcionSeleccionada(opcion);
@@ -92,9 +92,9 @@ function UsuarioPrincipal({ onLogout }) {
           </ul>
         </div>
         <div className="content">
-          {opcionSeleccionada === "cuenta" && usuario && <AdministracionCuenta usuario={usuario} />}
-          {opcionSeleccionada === "comidas" && usuario && <PlanificacionRecetas idUsuario={usuario.idUsuario} />}
-          {opcionSeleccionada === "presupuesto" && usuario && <HistorialPresupuesto historialPresupuesto={historialPresupuesto} />}
+          {opcionSeleccionada === "cuenta" && usuario && <AdministracionCuenta key={usuario.idUsuario} usuario={usuario} />}
+          {opcionSeleccionada === "comidas" && usuario && <PlanificacionRecetas key={usuario.idUsuario} idUsuario={usuario.idUsuario} />}
+          {opcionSeleccionada === "presupuesto" && usuario && <HistorialPresupuesto key={usuario.idUsuario} historialPresupuesto={historialPresupuesto} />}
         </div>
       </div>
     </main>

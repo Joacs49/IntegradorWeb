@@ -88,7 +88,6 @@
   width: 150px;
 }
 
-
 .formulario-cuenta button:hover {
   background-color: #4a5568;
 }
@@ -232,26 +231,35 @@ button:hover {
 .planificacion-container {
   margin: 20px;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f0f0f0;
-}
-
-.recomendaciones-section {
-  margin-bottom: 20px;
-}
-
-.recomendaciones-list {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.planificacion-container {
-  margin: 20px;
-  padding: 20px;
   border: none;
-  background-color: #ffffff; /* Fondo blanco */
+  border-radius: 5px;
+  background-color: #fff;
+  position: relative;
+}
 
+.presupuesto-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Alinea los elementos a la derecha */
+  margin-bottom: 10px; /* Espacio entre el contenedor y el input de presupuesto */
+}
+
+.presupuesto-display {
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+}
+
+.monto-actual-display {
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+}
+
+.presupuesto-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .recomendaciones-section {
@@ -303,14 +311,14 @@ button:hover {
 }
 
 .botones-bottom {
-  margin-top: auto; /* Empuja los botones hacia abajo */
+  margin-top: auto;
   display: flex;
-  justify-content: space-around; /* Distribuye los botones equitativamente */
+  justify-content: space-around;
 }
 
 .boton-descartar {
-  background-color: #e24a4a; /* Color rojo */
-  color: #ffffff; /* Texto blanco */
+  background-color: #e24a4a;
+  color: #ffffff;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
@@ -321,13 +329,49 @@ button:hover {
 }
 
 .plato-box.seleccionado {
-  background-color: #4caf50; /* Verde seleccionado */
+  background-color: #4caf50;
+}
+
+.boton-seleccionar {
+  background-color: #48bb78;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.boton-seleccionar.seleccionado {
+  background-color: #38a169;
+}
+
+.boton-seleccionar:hover {
+  background-color: #38a169;
 }
 
 .botones-bottom button {
   padding: 10px 10px;
   margin-top: 20px;
 }
+
+.presupuesto-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.presupuesto-input.input-error {
+  border: 2px solid red; /* Establecer borde rojo en caso de error */
+}
+
+.presupuesto-error {
+  color: red; /* Color de texto rojo para el mensaje de error */
+}
+
 
 @media (max-width: 480px) {
   .plato-box {
