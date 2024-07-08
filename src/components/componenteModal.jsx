@@ -9,7 +9,7 @@ const Modal = ({ isOpen, onClose, presupuestoActual, presupuesto }) => {
   return (
     <div className="modal-container">
       <div className="modal-content">
-        <h2>Alerta Presupuesto Excedido</h2>
+        <h2>Alerta: Presupuesto Excedido</h2>
         <p>El Monto Restante a Gastar es de: S/{montoRestante.toFixed(2)}</p>
         <button className="close-button" onClick={onClose}>
           Cerrar

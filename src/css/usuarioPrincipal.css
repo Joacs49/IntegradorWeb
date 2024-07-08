@@ -244,12 +244,6 @@ button:hover {
   margin-bottom: 10px; /* Espacio entre el contenedor y el input de presupuesto */
 }
 
-.presupuesto-display {
-  font-size: 16px;
-  color: #333;
-  font-weight: bold;
-}
-
 .monto-actual-display {
   font-size: 16px;
   color: #333;
