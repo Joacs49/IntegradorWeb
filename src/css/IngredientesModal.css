@@ -93,5 +93,13 @@
     background-color: #dc3545; /* Rojo */
     color: #fff;
   }
+
+  .button-generar-pdf:hover {
+    background-color: #218838; /* Verde más oscuro al hacer hover */
+}
+
+.button-cerrar:hover {
+  background-color: #c82333; /* Rojo más oscuro al hacer hover */
+}
   
   

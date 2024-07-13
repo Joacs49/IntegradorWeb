@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import axios from 'axios';
 
 function AdministracionCuenta({ usuario }) {
@@ -26,16 +26,6 @@ function AdministracionCuenta({ usuario }) {
     setClave(event.target.value);
   };
 
-  // Efecto para cargar los datos del usuario al inicio y cuando cambia el usuario
-  useEffect(() => {
-    setNombre(usuario.nombre);
-    setCorreo(usuario.correo);
-    setGenero(usuario.genero);
-    setAltura(usuario.altura);
-    setEdad(usuario.edad);
-    setPeso(usuario.peso);
-    setClave(usuario.clave);
-  }, [usuario]);
 
   // Función para guardar los cambios
   const handleGuardarCambios = async (e) => {

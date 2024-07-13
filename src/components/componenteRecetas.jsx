@@ -3,7 +3,7 @@ import axios from "axios";
 import Modal from "./componenteModal";
 import IngredientesModal from "./IngredientesModal";
 
-function PlanificacionRecetas({ idUsuario }) {
+function PlanificacionRecetas({ idUsuario, nombre }) {
   const [recomendaciones, setRecomendaciones] = useState([]);
   const [platosSeleccionados, setPlatosSeleccionados] = useState([]);
   const [presupuesto, setPresupuesto] = useState(0);
@@ -11,8 +11,10 @@ function PlanificacionRecetas({ idUsuario }) {
   const [presupuestoDisplay, setPresupuestoDisplay] = useState("S/0");
   const [presupuestoGuardado, setPresupuestoGuardado] = useState(0);
   const [montoActual, setMontoActual] = useState(0);
-  const [modalAbierto, setModalAbierto] = useState(false); // Estado para controlar la apertura del modal
-  const [ingredientesModalAbierto, setIngredientesModalAbierto] = useState(false); // Estado para controlar la apertura del modal de ingredientes
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [ingredientesModalAbierto, setIngredientesModalAbierto] = useState(false);
+  const [presupuestoPlan, setPresupuestoPlan] = useState(0);
+  const [idUsuarioPlan, setIdUsuarioPlan] = useState(0);
 
   // Función para obtener las recomendaciones
   const obtenerRecomendaciones = async (idUsuario) => {
@@ -21,27 +23,6 @@ function PlanificacionRecetas({ idUsuario }) {
       setRecomendaciones(response.data.split("\n"));
     } catch (error) {
       console.error("Error al obtener las recomendaciones:", error);
-    }
-  };
-
-  // Función para guardar un plato por su nombre
-  const guardarPorNombre = async (nombrePlato) => {
-    try {
-      const response = await axios.get(`http://localhost:8090/api/recetas/detallePorNombre/${nombrePlato}`);
-
-      if (response.data) {
-        const platoGuardado = {
-          nombre: nombrePlato,
-          ingredientes: response.data.ingredientes,
-          precioTotal: await obtenerPlatoPorNombre(nombrePlato)
-        };
-
-        setPlatosSeleccionados(prevPlatos => [...prevPlatos, platoGuardado]);
-      } else {
-        console.error(`No se pudo obtener detalles para ${nombrePlato}`);
-      }
-    } catch (error) {
-      console.error(`Error al intentar guardar ${nombrePlato}:`, error);
     }
   };
 
@@ -81,23 +62,62 @@ function PlanificacionRecetas({ idUsuario }) {
     setMontoActual(total);
   }, [platosSeleccionados]);
 
-  // Manejar el clic para obtener recomendaciones
   const handleRecomendacionesClick = async () => {
     if (!presupuesto || presupuesto < 50 || presupuesto > 500) {
       setPresupuestoError(true);
       return;
     }
-
-    await obtenerRecomendaciones(idUsuario);
-    setPresupuestoDisplay(`S/${presupuesto}`);
-    setPresupuestoGuardado(presupuesto);
-    setPresupuesto(0);
-    setPresupuestoError(false);
+  
+    try {
+      setPresupuestoGuardado(presupuesto); // Guardar el presupuesto antes de actualizar el display
+      setPresupuestoDisplay(`S/${presupuesto}`);
+      setPresupuestoError(false);
+  
+      await obtenerRecomendaciones(idUsuario);
+      // No establezcas presupuesto a cero aquí
+    } catch (error) {
+      console.error("Error al obtener recomendaciones:", error);
+    }
   };
+  
+  const handleGuardarPlanDeComidas = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8090/api/plandecomida/register",
+        {
+          usuario: nombre,
+          presupuesto: presupuestoGuardado, // Usar presupuestoGuardado en lugar de presupuesto
+          platos: platosSeleccionados
+        },
+        {
+          params: {
+            userId: idUsuario
+          }
+        }
+      );
+  
+      if (response.status === 200) {
+        console.log("Plan de comida registrado correctamente:", response.data);
+        handleAbrirIngredientesModal();
+        setPresupuesto(0); // Limpiar el presupuesto después de guardar el plan
+      } else {
+        console.error("Error al registrar el plan de comida:", response.data);
+      }
+    } catch (error) {
+      console.error("Error al registrar el plan de comida:", error);
+    }
+  };
+  
+  
 
   // Manejar la selección de un plato
-  const handleSeleccionar = async (nombrePlato) => {
+  const handleSeleccionar = async (nombrePlatoCompleto) => {
+    // Filtrar el nombre del plato para quitar cualquier número al inicio
+    const match = nombrePlatoCompleto.match(/^\d+/);
+    const nombrePlato = match ? nombrePlatoCompleto.substring(match[0].length).trim() : nombrePlatoCompleto;
+
     const platoExistente = platosSeleccionados.find((plato) => plato.nombre === nombrePlato);
+    const idReceta = nombrePlatoCompleto ? nombrePlatoCompleto.match(/\d+/)[0] : '';
 
     if (!platoExistente) {
       try {
@@ -112,10 +132,22 @@ function PlanificacionRecetas({ idUsuario }) {
         }
 
         // Guardar el plato por su nombre usando la función existente
-        await guardarPorNombre(nombrePlato);
+        const response = await axios.get(`http://localhost:8090/api/recetas/detallePorNombre/${nombrePlato}`);
 
-        // Actualizar monto actual
-        setMontoActual(prevMonto => prevMonto + precioPlato);
+        if (response.data) {
+          const platoGuardado = {
+            nombre: nombrePlato,
+            ingredientes: response.data.ingredientes,
+            precioTotal: precioPlato,
+            idReceta: idReceta // Guardar idReceta aquí
+          };
+
+          setPlatosSeleccionados(prevPlatos => [...prevPlatos, platoGuardado]);
+          // Actualizar monto actual
+          setMontoActual(prevMonto => prevMonto + precioPlato);
+        } else {
+          console.error(`No se pudo obtener detalles para ${nombrePlato}`);
+        }
       } catch (error) {
         console.error(`Error al seleccionar ${nombrePlato}:`, error);
       }
@@ -124,9 +156,15 @@ function PlanificacionRecetas({ idUsuario }) {
 
   // Manejar el descarte de un plato
   const handleDescartar = (nombrePlato, precioTotal) => {
-    const nuevosPlatosSeleccionados = platosSeleccionados.filter((plato) => plato.nombre !== nombrePlato);
-    setPlatosSeleccionados(nuevosPlatosSeleccionados);
-    setMontoActual(prevMonto => prevMonto - precioTotal);
+    const match = nombrePlato.match(/^\d+/);
+    const nombrePlato1 = match ? nombrePlato.substring(match[0].length).trim() : nombrePlato;
+    const platoDescartado = platosSeleccionados.find((plato) => plato.nombre === nombrePlato1);
+
+    if (platoDescartado) {
+      const nuevosPlatosSeleccionados = platosSeleccionados.filter((plato) => plato.nombre !== nombrePlato1);
+      setPlatosSeleccionados(nuevosPlatosSeleccionados);
+      setMontoActual(prevMonto => prevMonto - parseFloat(precioTotal)); // Asegurarse de parsear precioTotal a float
+    }
   };
 
   // Manejar el cambio en el campo de presupuesto
@@ -138,20 +176,14 @@ function PlanificacionRecetas({ idUsuario }) {
 
   // Abrir modal de ingredientes
   const handleAbrirIngredientesModal = () => {
+    setPresupuestoPlan(presupuestoGuardado);
+    setIdUsuarioPlan(idUsuario);
     setIngredientesModalAbierto(true);
   };
 
   // Cerrar modal de ingredientes
   const handleCerrarIngredientesModal = () => {
     setIngredientesModalAbierto(false);
-  };
-
-  // Manejar el guardado del plan de comidas
-  const handleGuardarPlanDeComidas = () => {
- 
-    // Abrir modal de ingredientes al guardar el plan de comidas
-    handleAbrirIngredientesModal();
-
   };
 
   const handleCloseModal = () => {
@@ -188,22 +220,31 @@ function PlanificacionRecetas({ idUsuario }) {
         <div className="recomendaciones-list">
           {recomendaciones.length > 0 &&
             recomendaciones.map((recomendacion, index) => {
-              const [nombrePlato, ingredientesYPrecio] = recomendacion.split(":");
-              const [ingredientes, precioTotal] = ingredientesYPrecio ? ingredientesYPrecio.split("(Precio total: ") : ["", "0"];
+              const [nombrePlato, detalle] = recomendacion.split(":");
+              const [ingredientes, precioTotal] = detalle ? detalle.split("(Precio total: ") : ["", "0"];
               const ingredientesList = ingredientes.split(",").map((ingrediente) => ingrediente.trim());
-              const precio = precioTotal ? parseFloat(precioTotal.replace(")", "").trim()) : 0;
+              const idReceta = nombrePlato ? nombrePlato.match(/\d+/)[0] : '';
+
+              // Eliminar el número de receta del inicio del nombre del plato
+              const nombrePlatoSinNumero = nombrePlato.replace(/^\d+/, '').trim();
 
               return (
                 <div
                   key={index}
-                  className={`plato-box ${platosSeleccionados.some((plato) => plato.nombre === nombrePlato) ? "seleccionado" : ""}`}
+                  className={`plato-box ${platosSeleccionados.some((plato) => plato.nombre === nombrePlatoSinNumero) ? "seleccionado" : ""}`}
                 >
                   <div className="plato-info">
-                    <h4>{nombrePlato}</h4>
-                    {precio > 0 && (
-                      <span className="plato-precio"> (Precio total: ${precio})</span>
+                    <h4>{nombrePlatoSinNumero}</h4>
+                    {precioTotal && (
+                      <span className="plato-precio"> (Precio total: ${precioTotal})</span>
                     )}
                   </div>
+                  <input
+                    type="text"
+                    className="id-receta-input"
+                    value={idReceta}
+                    disabled
+                  />
                   <ul>
                     {ingredientesList.map((ingrediente, i) => (
                       <li key={i}>{ingrediente}</li>
@@ -211,22 +252,24 @@ function PlanificacionRecetas({ idUsuario }) {
                   </ul>
                   <div className="botones-bottom">
                     <button
-                      className={`boton-seleccionar ${platosSeleccionados.some((plato) => plato.nombre === nombrePlato) ? "seleccionado" : ""}`}
+                      className={`boton-seleccionar ${platosSeleccionados.some((plato) => plato.nombre === nombrePlatoSinNumero) ? "seleccionado" : ""}`}
                       onClick={() => handleSeleccionar(nombrePlato)}
                     >
                       Seleccionar
                     </button>
                     <button
                       className="boton-descartar"
-                      onClick={() => handleDescartar(nombrePlato, precio)}
+                      onClick={() => handleDescartar(nombrePlato, parseFloat(precioTotal))}
                     >
                       Descartar
                     </button>
                   </div>
                 </div>
               );
+
             })}
         </div>
+
         {platosSeleccionados.length > 0 && (
           <div className="guardar-plan-comidas">
             <button onClick={handleGuardarPlanDeComidas}>
@@ -241,14 +284,22 @@ function PlanificacionRecetas({ idUsuario }) {
         isOpen={ingredientesModalAbierto}
         onClose={handleCerrarIngredientesModal}
         platosSeleccionados={platosSeleccionados}
+        presupuesto={presupuestoPlan}
+        idUsuario={idUsuarioPlan}
+        nombre={nombre} 
       />
 
       <Modal
-        isOpen={modalAbierto} // Pasar estado de modalAbierto como prop isOpen
-        onClose={handleCloseModal} // Pasar función de cierre como prop onClose
-        presupuestoActual={montoActual} // Pasar montoActual como prop
-        presupuesto={presupuestoGuardado} // Pasar presupuestoGuardado como prop
+        isOpen={modalAbierto}
+        onClose={handleCloseModal}
+        presupuestoActual={montoActual}
+        presupuesto={presupuestoGuardado}
       />
+
+      {/* Input hidden para el idUsuario */}
+      <input type="hidden" name="idUsuario" value={idUsuario} disabled />
+      <input type="hidden" name="nombre" value={nombre} disabled />
+
     </div>
   );
 }

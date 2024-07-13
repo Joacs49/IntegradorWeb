@@ -25,6 +25,7 @@ function UsuarioPrincipal({ onLogout }) {
           return;
         }
         
+        // Envía la solicitud para obtener los datos del usuario
         const response = await axios.get(`http://localhost:8090/api/usuario/${correoParam}?clave=${claveParam}`);
         if (response.status === 200) {
           setUsuario(response.data);
@@ -40,7 +41,7 @@ function UsuarioPrincipal({ onLogout }) {
     if (!usuario && correoParam && claveParam) {
       obtenerDatosUsuario();
     }
-  }, [correoParam, claveParam, usuario]); // Asegúrate de que usuario esté en las dependencias para volver a cargar al cambiar
+  }, [correoParam, claveParam, usuario]);
 
   const handleOpcionClick = (opcion) => {
     setOpcionSeleccionada(opcion);
@@ -93,8 +94,16 @@ function UsuarioPrincipal({ onLogout }) {
         </div>
         <div className="content">
           {opcionSeleccionada === "cuenta" && usuario && <AdministracionCuenta key={usuario.idUsuario} usuario={usuario} />}
-          {opcionSeleccionada === "comidas" && usuario && <PlanificacionRecetas key={usuario.idUsuario} idUsuario={usuario.idUsuario} />}
-          {opcionSeleccionada === "presupuesto" && usuario && <HistorialPresupuesto key={usuario.idUsuario} historialPresupuesto={historialPresupuesto} />}
+          {opcionSeleccionada === "comidas" && usuario && (
+            <PlanificacionRecetas
+              key={usuario.idUsuario}
+              idUsuario={usuario.idUsuario}
+              nombre={usuario.nombre} // Pasar el nombre del usuario
+            />
+          )}
+          {opcionSeleccionada === "presupuesto" && usuario && (
+            <HistorialPresupuesto key={usuario.idUsuario} historialPresupuesto={historialPresupuesto} />
+          )}
         </div>
       </div>
     </main>
