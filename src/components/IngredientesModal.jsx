@@ -1,12 +1,44 @@
 import React from "react";
-//import axios from "axios";
-import "../css/IngredientesModal.css"; // Asegúrate de tener la ruta correcta al archivo CSS
+import axios from "axios";
+import "../css/IngredientesModal.css";
 
-const IngredientesModal = ({ isOpen, onClose, platosSeleccionados}) => {
+const IngredientesModal = ({ isOpen, onClose, platosSeleccionados, idUsuario }) => {
 
   const handleGenerarPDF = async () => {
-    
-  }
+    try {
+        const idsRecetas = platosSeleccionados.map(plato => parseInt(plato.idReceta));
+
+        console.log("IDs de receta a enviar:", idsRecetas);
+        console.log("ID de usuario a enviar:", idUsuario);
+
+        const response = await axios.post(
+            "http://localhost:8090/api/plandecomida/recetaplan",idsRecetas,
+            {
+                params: {
+            userId: idUsuario
+        }
+            }
+        );
+
+        if (response.status === 200) {
+            console.log("Plan de comida guardado correctamente:", response.data);
+            // Implementa lógica adicional si es necesario
+        } else {
+            console.error("Error al guardar el plan de comida:", response.data);
+            // Maneja el error según sea necesario
+        }
+    } catch (error) {
+        console.error("Error al guardar el plan de comida:", error);
+        // Maneja el error según sea necesario
+    }
+};
+
+
+
+  
+  
+   
+
   return (
     <div className={`modal ${isOpen ? "open" : ""}`}>
       <div className="modal-content">
@@ -41,3 +73,5 @@ const IngredientesModal = ({ isOpen, onClose, platosSeleccionados}) => {
 };
 
 export default IngredientesModal;
+
+
