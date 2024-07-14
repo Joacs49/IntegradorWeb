@@ -1,16 +1,17 @@
 .calculator{
   margin-top: 40px;
   padding: 20px;
-  background-color: #daffea;
+  background-color: #dafff7;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .calculator h2{
-  color: #18864f;
+  color: #0bd6a3;
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 16px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .bmi-calculator {
@@ -48,7 +49,7 @@
   }
   
   .calculate-button {
-    background-color: #48bb78;
+    background-color: #0bd692;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -59,7 +60,7 @@
   }
   
   .calculate-button:hover {
-    background-color: #22a358;
+    background-color: #059666;
   }
   
   .result-container {

@@ -5,7 +5,7 @@
   
 .faq-section h2 {
     color: #ffffff;
-    background-color: #327e07;
+    background-color: #2c9765;
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 16px;
@@ -20,20 +20,35 @@ margin-bottom: 20px;
 }
 
 .question {
-background-color: #71af4c;
-color: #fff;
-padding: 16px;
-font-weight: bold;
-border-radius: 8px;
-text-align: left;
-width: 100%;
-cursor: pointer;
-transition: background-color 0.3s ease;
+  padding: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.question:hover {
-background-color: #22a358;
+/* Estilo para preguntas impares */
+.faq-item:nth-child(odd) .question {
+  background-color: #43aa7a;
+  color: #000000;
 }
+.faq-item:nth-child(odd) .question:hover {
+  background-color: #1d6342;
+  color: #ffffff;
+}
+
+/* Estilo para preguntas pares */
+.faq-item:nth-child(even) .question {
+  background-color: #5ca5c2;
+  color: #000000;
+}
+.faq-item:nth-child(even) .question:hover {
+  background-color: #305e70;
+  color: #ffffff;
+}
+
 
 .answer {
 padding: 16px;

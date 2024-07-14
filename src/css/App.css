@@ -7,7 +7,7 @@ body {
 
 .home-background {
   /*background: linear-gradient(to right, #1F7B40, #268B4C, #30A55D, #3AB86D, #3BBA6E);*/
-  background-image: url('../img/fondo_nutricion.png');
+  background-image: url('../img/fondo_principal.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -109,8 +109,9 @@ header {
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #48bb78;
+  color: #258d5d;
   text-decoration: none;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.250);
 }
 
 .nav-links {

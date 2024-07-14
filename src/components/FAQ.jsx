@@ -52,7 +52,7 @@ const FAQ = () => {
 
   return (
     <div className="faq-section">
-      <h2>Preguntas Frecuentes</h2>
+      <h2 className='text-special'>Preguntas Frecuentes</h2>
       {faqData.map((item) => (
   <div key={item.id} className="faq-item">
     <button className="question" onClick={() => toggleAnswer(item.id)}>
