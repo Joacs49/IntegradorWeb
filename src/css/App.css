@@ -40,6 +40,7 @@ body {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  border-style: groove;
 }
 
 .slide.active {
@@ -172,9 +173,10 @@ header {
 }
 
 .main-heading {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: bold;
   line-height: 1.25;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.753);
 }
 
 @media (min-width: 768px) {
@@ -184,9 +186,9 @@ header {
 }
 
 .description {
-  color: #241e1e;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: 22px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.400);
 }
 
 .button-group {
