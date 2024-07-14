@@ -12,11 +12,13 @@ function PlanificacionRecetas({ idUsuario, nombre }) {
   const [presupuestoGuardado, setPresupuestoGuardado] = useState(0);
   const [montoActual, setMontoActual] = useState(0);
   const [modalAbierto, setModalAbierto] = useState(false);
-  const [ingredientesModalAbierto, setIngredientesModalAbierto] = useState(false);
+  const [ingredientes, setIngredientes] = useState(false);
   const [presupuestoPlan, setPresupuestoPlan] = useState(0);
   const [idUsuarioPlan, setIdUsuarioPlan] = useState(0);
 
   const [dias, setDias] = useState([]);
+
+  
 
   const handleSelectChange = (index, e) => {
     const selectedDays = e.target.value; // Obtener el valor seleccionado directamente
@@ -178,28 +180,17 @@ const handleSeleccionar = async (nombrePlatoCompleto, index) => {
   }
 };
 
-
-  // Manejar el descarte de un plato
-  // Función para manejar el descarte de un plato
 // Función para manejar el descarte de un plato
 const handleDescartar = (nombrePlato, precioTotal) => {
-  const platoDescartado = platosSeleccionados.find((plato) => plato.nombre === nombrePlato);
+  const match = nombrePlato.match(/^\d+/);
+    const nombrePlato1 = match ? nombrePlato.substring(match[0].length).trim() : nombrePlato;
+    const platoDescartado = platosSeleccionados.find((plato) => plato.nombre === nombrePlato1);
 
-  if (platoDescartado) {
-    // Verificar si al descartar el plato se excede el presupuesto guardado
-    const nuevoTotal = montoActual - parseFloat(precioTotal);
-    if (presupuestoGuardado && nuevoTotal < 0) {
-      setModalAbierto(true);
-      return; // Evitar descartar el plato si se excede el presupuesto
+    if (platoDescartado) {
+      const nuevosPlatosSeleccionados = platosSeleccionados.filter((plato) => plato.nombre !== nombrePlato1);
+      setPlatosSeleccionados(nuevosPlatosSeleccionados);
+      setMontoActual(prevMonto => prevMonto - parseFloat(precioTotal)); // Asegurarse de parsear precioTotal a float
     }
-
-    // Filtrar los platos seleccionados y mantener solo los que no sean el plato descartado
-    const nuevosPlatosSeleccionados = platosSeleccionados.filter((plato) => plato.nombre !== nombrePlato);
-    setPlatosSeleccionados(nuevosPlatosSeleccionados);
-
-    // Actualizar el monto total restando el precio del plato descartado
-    setMontoActual(prevMonto => prevMonto - parseFloat(precioTotal)); // Asegurarse de parsear precioTotal a float
-  }
 };
 
 
@@ -215,12 +206,12 @@ const handleDescartar = (nombrePlato, precioTotal) => {
   const handleAbrirIngredientesModal = () => {
     setPresupuestoPlan(presupuestoGuardado);
     setIdUsuarioPlan(idUsuario);
-    setIngredientesModalAbierto(true);
+    setIngredientes(true);
   };
 
   // Cerrar modal de ingredientes
   const handleCerrarIngredientesModal = () => {
-    setIngredientesModalAbierto(false);
+    setIngredientes(false);
   };
 
   const handleCloseModal = () => {
@@ -327,11 +318,12 @@ const handleDescartar = (nombrePlato, precioTotal) => {
             </button>
           </div>
         )}
+        
       </div>
 
       {/* Modal de ingredientes */}
       <IngredientesModal
-        isOpen={ingredientesModalAbierto}
+        isOpen={ingredientes}
         onClose={handleCerrarIngredientesModal}
         platosSeleccionados={platosSeleccionados}
         presupuesto={presupuestoPlan}

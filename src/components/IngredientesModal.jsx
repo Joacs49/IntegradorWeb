@@ -2,30 +2,30 @@ import React from "react";
 import axios from "axios";
 import "../css/IngredientesModal.css";
 
-const IngredientesModal = ({ isOpen, onClose, platosSeleccionados, idUsuario, dias}) => {
+const IngredientesModal = ({ isOpen, onClose, platosSeleccionados, idUsuario, dias }) => {
 
   const handleGenerarPDF = async () => {
     try {
       const idsRecetas = platosSeleccionados.map((plato) => parseInt(plato.idReceta));
       const diasSeleccionados = dias.filter(dia => dia !== ''); // Filtrar días no seleccionados
-  
+
       const data = {
         recetas: idsRecetas,
         dias: diasSeleccionados
       };
-  
-      console.log("Datos a enviar:", data); // Imprimir datos por consola
-  
+
+      console.log("Datos a enviar:", data);
+
       const response = await axios.post(
         `http://localhost:8090/api/plandecomida/recetaplan`,
         data,
         {
           params: {
-            userId: idUsuario // Asegúrate de que idUsuario sea un Long en el backend
+            userId: idUsuario
           }
         }
       );
-  
+
       if (response.status === 200) {
         console.log("Plan de comida guardado correctamente:", response.data);
         // Implementa lógica adicional si es necesario
@@ -38,24 +38,10 @@ const IngredientesModal = ({ isOpen, onClose, platosSeleccionados, idUsuario, di
       // Maneja el error según sea necesario
     }
   };
-  
-  
-  
-  
-  
-  
-
-
-  if (!isOpen) {
-    return null;
-  }
 
   return (
-    <div className={`modal ${isOpen ? "open" : ""}`}>
+    <div className={`modal ${isOpen ? "active" : ""}`}>
       <div className="modal-content">
-        <span className="close" onClick={onClose}>
-          &times;
-        </span>
         <h2>Detalles de Platos Seleccionados</h2>
         <div className="platos-seleccionados">
           {platosSeleccionados && platosSeleccionados.length > 0 ? (

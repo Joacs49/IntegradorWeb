@@ -1,105 +1,102 @@
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-  
-  .modal-content {
-    background-color: #fefefe;
-    margin: 10% auto; /* Ajusta este valor para centrar verticalmente */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Agrega sombra */
-  }
-  
-  .close {
-    color: #aaaaaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
-  
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
-  .open {
-    display: block;
-  }
-  
-  .platos-seleccionados {
-    margin-top: 20px;
-  }
-  
-  .plato-detalle {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Agrega sombra a cada plato */
-  }
-  
-  .plato-detalle h3 {
-    margin-bottom: 10px;
-  }
-  
-  .plato-detalle ul {
-    list-style-type: none; /* Elimina los puntos de la lista de ingredientes */
-    padding: 0;
-  }
-  
-  .plato-detalle ul li {
-    margin-bottom: 5px;
-  }
-  
-  .plato-detalle p {
-    margin-top: 10px;
-  }
-  
-  .button-container {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  }
-  
-  .button-container button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    outline: none;
-  }
-  
-  .button-generar-pdf {
-    background-color: #28a745; /* Verde */
-    color: #fff;
-  }
-  
-  .button-cerrar {
-    background-color: #dc3545; /* Rojo */
-    color: #fff;
-  }
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; 
+}
 
-  .button-generar-pdf:hover {
-    background-color: #218838; /* Verde más oscuro al hacer hover */
+/* Botón de cerrar */
+.close {
+  color: #aaaaaa; /* Color del icono */
+  float: right; /* Alineado a la derecha */
+  font-size: 28px; /* Tamaño del icono */
+  font-weight: bold; /* Negrita */
+}
+
+.close:hover,
+.close:focus {
+  color: #000; /* Cambio de color al hacer hover o enfocar */
+  text-decoration: none; /* Sin subrayado */
+  cursor: pointer; /* Cursor apuntador */
+}
+
+/* Mostrar el modal */
+.open {
+  display: block; /* Mostrar solo cuando la clase 'open' está presente */
+}
+
+/* Contenedor de platos seleccionados */
+.platos-seleccionados {
+  margin-top: 20px; /* Margen superior */
+}
+
+/* Detalle de cada plato */
+.plato-detalle {
+  margin-bottom: 20px; /* Margen inferior */
+  padding: 15px; /* Relleno */
+  border: 1px solid #ddd; /* Borde */
+  border-radius: 5px; /* Bordes redondeados */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+.plato-detalle h3 {
+  margin-bottom: 10px; /* Margen inferior para el título */
+}
+
+/* Lista de ingredientes */
+.plato-detalle ul {
+  list-style-type: none; /* Sin viñetas */
+  padding: 0; /* Sin relleno */
+}
+
+.plato-detalle ul li {
+  margin-bottom: 5px; /* Margen inferior entre elementos de la lista */
+}
+
+.plato-detalle p {
+  margin-top: 10px; /* Margen superior para el precio */
+}
+
+/* Contenedor de botones */
+.button-container {
+  display: flex; /* Mostrar los botones en línea */
+  justify-content: space-between; /* Espacio entre los botones */
+  margin-top: 20px; /* Margen superior */
+}
+
+.button-container button {
+  padding: 10px 20px; /* Relleno del botón */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cursor apuntador */
+  font-size: 16px; /* Tamaño del texto */
+  font-weight: bold; /* Negrita */
+  text-transform: uppercase; /* Texto en mayúsculas */
+  outline: none; /* Sin contorno al enfocar */
+}
+
+/* Estilo del botón Generar PDF */
+.button-generar-pdf {
+  background-color: #28a745; /* Verde */
+  color: #fff; /* Color de texto blanco */
+}
+
+.button-generar-pdf:hover {
+  background-color: #218838; /* Verde más oscuro al hacer hover */
+}
+
+/* Estilo del botón Cerrar */
+.button-cerrar {
+  background-color: #dc3545; /* Rojo */
+  color: #fff; /* Color de texto blanco */
 }
 
 .button-cerrar:hover {
   background-color: #c82333; /* Rojo más oscuro al hacer hover */
 }
-  
-  
