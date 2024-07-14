@@ -6,7 +6,11 @@ body {
 }
 
 .home-background {
-  background: linear-gradient(to right, #1F7B40, #268B4C, #30A55D, #3AB86D, #3BBA6E);
+  /*background: linear-gradient(to right, #1F7B40, #268B4C, #30A55D, #3AB86D, #3BBA6E);*/
+  background-image: url('../img/fondo_nutricion.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .login-background {
@@ -226,6 +230,7 @@ header {
   font-weight: 500;
   color: #111827;
   transition: background-color 0.2s, color 0.2s;
+  border-radius: 8px;
 }
 
 .btn-secondary:hover {
@@ -247,8 +252,6 @@ header {
 .grid-features {
   display: grid;
   gap: 32px;
-  margin-top: 48px;
-  margin-bottom: 40px;
 }
 
 @media (min-width: 768px) {
@@ -256,10 +259,56 @@ header {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
 
+.modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: #fff;
+  width: 80%;
+  max-width: 800px;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.modal.active .modal-content {
+  transform: translateY(0);
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}
+
+
+/* Estilos para las cards dentro del modal */
 .feature-card {
   border-radius: 16px;
-  background-color: #f3f4f6;
+  background-color: #a8fce0;
   padding: 24px;
 }
 
@@ -296,6 +345,8 @@ header {
   color: #6b7280;
 }
 
+
+
 .slider-container {
   display: flex;
   justify-content: center;
@@ -307,3 +358,5 @@ header {
   width: 100%;
   height: 100%;
 }
+
+

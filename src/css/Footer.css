@@ -1,0 +1,37 @@
+/* Estilos para el footer */
+.footer {
+background-color: transparent;
+color: #000000;
+text-align: end;
+padding: 20px 0;
+margin-top: 40px;
+
+}
+
+.footer-content {
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 20px;
+}
+
+.footer-content p {
+margin: 0;
+}
+
+.footer-nav {
+margin-top: 10px;
+}
+
+.footer-button{
+background: none;
+border: none;
+color: #000000;
+text-decoration: none;
+cursor: pointer;
+padding: 5px;
+font-family: inherit;
+}
+
+button:hover{
+  background-color: none;
+}
