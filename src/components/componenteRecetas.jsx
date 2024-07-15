@@ -18,8 +18,6 @@ function PlanificacionRecetas({ idUsuario, nombre }) {
 
   const [dias, setDias] = useState([]);
 
-  
-
   const handleSelectChange = (index, e) => {
     const selectedDays = e.target.value; // Obtener el valor seleccionado directamente
     setDias(prevDias => {
@@ -221,10 +219,12 @@ const handleDescartar = (nombrePlato, precioTotal) => {
   return (
     <div className="planificacion-container">
       <div className="presupuesto-container">
-        <div className="monto-actual-display">
+      <div className="monto-actual-display">
           <p>Presupuesto: {presupuestoDisplay}</p>
+          <p>Presupuesto Diario: S/{(presupuesto ? (presupuesto / 7).toFixed(2) : '0.00')}</p>
           <p>Monto Actual: S/{montoActual.toFixed(2)}</p>
-        </div>
+          <p>Monto Restante: S/{(presupuesto && montoActual >= 0 ? (presupuesto - montoActual).toFixed(2) : '0.00')}</p>
+        </div>
       </div>
       <label className="presupuesto-label">Ingrese su Presupuesto:</label>
       <input

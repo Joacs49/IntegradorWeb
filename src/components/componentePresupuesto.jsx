@@ -1,6 +1,35 @@
 import React from "react";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
-function HistorialPresupuesto({ historialPresupuesto }) {
+function HistorialPresupuesto({ historialPresupuesto = [], presupuestoDisplay, montoActual }) {
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Historial de Presupuesto", 10, 10);
+    
+    const tableColumn = ["Fecha", "Presupuesto Asignado (S/.)", "Gastos Reales (S/.)"];
+    const tableRows = [];
+
+    historialPresupuesto.forEach(item => {
+      const historialData = [
+        item.mes || fechaActual,
+        item.presupuestoAsignado || presupuestoDisplay,
+        item.gastosReales || montoActual.toFixed(2)
+      ];
+      tableRows.push(historialData);
+    });
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save("historial_presupuesto.pdf");
+  };
+
+  const fechaActual = new Date().toLocaleDateString();
+
   return (
     <div>
       <h2>Historial de Presupuesto</h2>
@@ -14,16 +43,17 @@ function HistorialPresupuesto({ historialPresupuesto }) {
             </tr>
           </thead>
           <tbody>
-            {historialPresupuesto && historialPresupuesto.map((item, index) => (
+            {historialPresupuesto.map((item, index) => (
               <tr key={index}>
-                <td>{item.mes}</td>
-                <td>{item.presupuestoAsignado}</td>
-                <td>{item.gastosReales}</td>
+                <td>{item.mes || fechaActual}</td>
+                <td>{item.presupuestoAsignado || presupuestoDisplay}</td>
+                <td>{item.gastosReales || montoActual.toFixed(2)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <button onClick={handleDownloadPDF}>Descargar en PDF</button>
     </div>
   );
 }
