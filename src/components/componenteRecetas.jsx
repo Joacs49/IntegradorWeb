@@ -3,7 +3,8 @@ import axios from "axios";
 import Modal from "./componenteModal";
 import IngredientesModal from "./IngredientesModal";
 
-function PlanificacionRecetas({ idUsuario, nombre }) {
+
+function PlanificacionRecetas({ idUsuario, nombre, onUpdateBudgetAndExpenses }) {
   const [recomendaciones, setRecomendaciones] = useState([]);
   const [platosSeleccionados, setPlatosSeleccionados] = useState([]);
   const [presupuesto, setPresupuesto] = useState(0);
@@ -18,23 +19,24 @@ function PlanificacionRecetas({ idUsuario, nombre }) {
 
   const [dias, setDias] = useState([]);
 
-  const handleSelectChange = (index, e) => {
-    const selectedDays = e.target.value; // Obtener el valor seleccionado directamente
+  const handleSelectChange = async (index, e) => {
+    const selectedDay = e.target.value; // Obtener el valor seleccionado directamente
+
+    // Actualizar el estado de los días seleccionados
     setDias(prevDias => {
       const newDias = [...prevDias];
-      newDias[index] = selectedDays;
+      newDias[index] = selectedDay;
       return newDias;
     });
-  
+
     // Si ya hay un plato seleccionado para este índice, descartarlo automáticamente
     if (platosSeleccionados[index]) {
       handleDescartar(platosSeleccionados[index].nombre, platosSeleccionados[index].precioTotal);
     }
-  
-    // Seleccionar automáticamente el plato con el nuevo día seleccionado
-    handleSeleccionar(recomendaciones[index], index);
-  };
 
+    // Seleccionar automáticamente el plato con el nuevo día seleccionado
+    await handleSeleccionar(recomendaciones[index], index, selectedDay);
+  };
 
   // Función para obtener las recomendaciones
   const obtenerRecomendaciones = async (idUsuario) => {
@@ -73,6 +75,7 @@ function PlanificacionRecetas({ idUsuario, nombre }) {
     }
   };
 
+
   // Función para actualizar el monto total al seleccionar o descartar platos
   useEffect(() => {
     let total = 0;
@@ -83,9 +86,10 @@ function PlanificacionRecetas({ idUsuario, nombre }) {
   }, [platosSeleccionados]);
 
   const handleRecomendacionesClick = async () => {
-    if (!presupuesto || presupuesto < 50 || presupuesto > 500) {
+    if (!presupuesto || presupuesto < 400 || presupuesto > 1000) {
       setPresupuestoError(true);
       return;
+
     }
 
     try {
@@ -102,24 +106,39 @@ function PlanificacionRecetas({ idUsuario, nombre }) {
 
   const handleGuardarPlanDeComidas = async () => {
     try {
+      const platosFiltrados = platosSeleccionados.reduce((uniquePlatos, plato) => {
+        const exists = uniquePlatos.some((p) => p.dia === plato.dia);
+        if (!exists) {
+          uniquePlatos.push(plato);
+        }
+        return uniquePlatos;
+      }, []);
+  
       const response = await axios.post(
         "http://localhost:8090/api/plandecomida/register",
         {
           usuario: nombre,
-          presupuesto: presupuestoGuardado, // Usar presupuestoGuardado en lugar de presupuesto
-          platos: platosSeleccionados
+          presupuesto: presupuestoGuardado,
+          platos: platosFiltrados,
         },
         {
           params: {
-            userId: idUsuario
-          }
+            userId: idUsuario,
+          },
         }
       );
-
+  
       if (response.status === 200) {
         console.log("Plan de comida registrado correctamente:", response.data);
         handleAbrirIngredientesModal();
+
+        const fechaActual = new Date().toISOString().split('T')[0];
+        onUpdateBudgetAndExpenses(presupuesto, montoActual, fechaActual );
+
         setPresupuesto(0); // Limpiar el presupuesto después de guardar el plan
+  
+        
+        setMontoActual(0);
       } else {
         console.error("Error al registrar el plan de comida:", response.data);
       }
@@ -128,59 +147,66 @@ function PlanificacionRecetas({ idUsuario, nombre }) {
     }
   };
 
-
-
-// Manejar la selección de un plato
-const handleSeleccionar = async (nombrePlatoCompleto, index) => {
-  if (!dias[index]) {
-    return;
-  }
-
-  // Filtrar el nombre del plato para quitar cualquier número al inicio
-  const match = nombrePlatoCompleto.match(/^\d+/);
-  const nombrePlato = match ? nombrePlatoCompleto.substring(match[0].length).trim() : nombrePlatoCompleto;
-
-  const platoExistente = platosSeleccionados.find((plato) => plato.nombre === nombrePlato);
-  const idReceta = nombrePlatoCompleto ? nombrePlatoCompleto.match(/\d+/)[0] : '';
-
-  if (!platoExistente) {
-    try {
-      // Obtener el precio total del plato por su nombre
-      const precioPlato = await obtenerPlatoPorNombre(nombrePlato);
-
-      // Verificar si se excede el presupuesto guardado
-      const nuevoTotal = montoActual + precioPlato;
-      if (presupuestoGuardado && nuevoTotal > presupuestoGuardado) {
-        setModalAbierto(true);
-        return; // Evitar agregar el plato si se excede el presupuesto
-      }
-
-      // Guardar el plato por su nombre usando la función existente
-      const response = await axios.get(`http://localhost:8090/api/recetas/detallePorNombre/${nombrePlato}`);
-
-      if (response.data) {
-        const platoGuardado = {
-          nombre: nombrePlato,
-          ingredientes: response.data.ingredientes,
-          precioTotal: precioPlato,
-          idReceta: idReceta // Guardar idReceta aquí
-        };
-
-        setPlatosSeleccionados(prevPlatos => [...prevPlatos, platoGuardado]);
-        // Actualizar monto actual
-        setMontoActual(prevMonto => prevMonto + precioPlato);
-      } else {
-        console.error(`No se pudo obtener detalles para ${nombrePlato}`);
-      }
-    } catch (error) {
-      console.error(`Error al seleccionar ${nombrePlato}:`, error);
+  // Manejar la selección de un plato
+  const handleSeleccionar = async (nombrePlatoCompleto, index, selectedDay) => {
+    if (!dias[index]) {
+      return;
     }
-  }
-};
 
-// Función para manejar el descarte de un plato
-const handleDescartar = (nombrePlato, precioTotal) => {
-  const match = nombrePlato.match(/^\d+/);
+    const precioPlato = await obtenerPlatoPorNombre(nombrePlatoCompleto);
+
+    // Calcular el presupuesto diario
+    const presupuestoDiario = presupuesto / 7;
+
+    // Verificar si el plato excede el presupuesto diario
+
+
+    // Filtrar el nombre del plato para quitar cualquier número al inicio
+    const match = nombrePlatoCompleto.match(/^\d+/);
+    const nombrePlato = match ? nombrePlatoCompleto.substring(match[0].length).trim() : nombrePlatoCompleto;
+
+    // Verificar si el día ya está seleccionado en otro plato
+    if (platosSeleccionados.some((plato) => plato.dia === selectedDay)) {
+      console.log(`Ya hay un plato seleccionado para el día ${selectedDay}`);
+      return;
+    }
+
+    const platoExistente = platosSeleccionados.find((plato) => plato.nombre === nombrePlato);
+
+    if (!platoExistente) {
+      try {
+        if (precioPlato <= presupuestoDiario) {
+          const response = await axios.get(`http://localhost:8090/api/recetas/detallePorNombre/${nombrePlato}`);
+
+          if (response.data) {
+            const platoGuardado = {
+              nombre: nombrePlato,
+              ingredientes: response.data.ingredientes,
+              precioTotal: precioPlato,
+              idReceta: nombrePlatoCompleto.match(/\d+/)[0], // Guardar idReceta aquí
+              dia: selectedDay, // Guardar el día seleccionado
+            };
+
+            setPlatosSeleccionados((prevPlatos) => [...prevPlatos, platoGuardado]);
+            // Actualizar monto actual
+            setMontoActual((prevMonto) => prevMonto + precioPlato);
+            console.log(selectedDay)
+          } else {
+            console.error(`No se pudo obtener detalles para ${nombrePlato}`);
+          }
+        } else {
+          console.log(`El plato ${nombrePlatoCompleto} excede el presupuesto diario.`, selectedDay);
+          console.log(selectedDay)
+        }
+      } catch (error) {
+        console.error(`Error al seleccionar ${nombrePlato}:`, error);
+      }
+    }
+  };
+
+  // Función para manejar el descarte de un plato
+  const handleDescartar = (nombrePlato, precioTotal) => {
+    const match = nombrePlato.match(/^\d+/);
     const nombrePlato1 = match ? nombrePlato.substring(match[0].length).trim() : nombrePlato;
     const platoDescartado = platosSeleccionados.find((plato) => plato.nombre === nombrePlato1);
 
@@ -189,9 +215,7 @@ const handleDescartar = (nombrePlato, precioTotal) => {
       setPlatosSeleccionados(nuevosPlatosSeleccionados);
       setMontoActual(prevMonto => prevMonto - parseFloat(precioTotal)); // Asegurarse de parsear precioTotal a float
     }
-};
-
-
+  };
 
   // Manejar el cambio en el campo de presupuesto
   const handleChangePresupuesto = (e) => {
@@ -216,15 +240,37 @@ const handleDescartar = (nombrePlato, precioTotal) => {
     setModalAbierto(false);
   };
 
+  const getFullDayName = (dayAbbr) => {
+    switch (dayAbbr) {
+      case 'Lunes':
+        return 'Lunes';
+      case 'Martes':
+        return 'Martes';
+      case 'Miércoles':
+        return 'Miércoles';
+      case 'Jueves':
+        return 'Jueves';
+      case 'Viernes':
+        return 'Viernes';
+      case 'Sábado':
+        return 'Sábado';
+      case 'Domingo':
+        return 'Domingo';
+      default:
+        return ''; // Esto debería manejarse adecuadamente en tu lógica, si ocurre algo inesperado.
+    }
+  };
+
+
   return (
     <div className="planificacion-container">
       <div className="presupuesto-container">
-      <div className="monto-actual-display">
+        <div className="monto-actual-display">
           <p>Presupuesto: {presupuestoDisplay}</p>
           <p>Presupuesto Diario: S/{(presupuesto ? (presupuesto / 7).toFixed(2) : '0.00')}</p>
           <p>Monto Actual: S/{montoActual.toFixed(2)}</p>
           <p>Monto Restante: S/{(presupuesto && montoActual >= 0 ? (presupuesto - montoActual).toFixed(2) : '0.00')}</p>
-        </div>
+        </div>
       </div>
       <label className="presupuesto-label">Ingrese su Presupuesto:</label>
       <input
@@ -238,7 +284,7 @@ const handleDescartar = (nombrePlato, precioTotal) => {
         onChange={handleChangePresupuesto}
         required
       />
-      {presupuestoError && <p className="presupuesto-error">Ingrese un presupuesto válido entre 50 y 500</p>}
+      {presupuestoError && <p className="presupuesto-error">Ingrese un presupuesto válido entre 400 y 1000</p>}
       <div className="recomendaciones-section">
         <button onClick={handleRecomendacionesClick}>
           Obtener Recomendaciones
@@ -268,7 +314,7 @@ const handleDescartar = (nombrePlato, precioTotal) => {
                     )}
                   </div>
                   <input
-                    type="text"
+                    type="hidden"
                     className="id-receta-input"
                     value={idReceta}
                     disabled
@@ -278,7 +324,8 @@ const handleDescartar = (nombrePlato, precioTotal) => {
                       <li key={i}>{ingrediente}</li>
                     ))}
                   </ul>
-                  <select value={dias[index] || ''} onChange={(e) => handleSelectChange(index, e)}>
+                  <select className={`dias-select ${platosSeleccionados.some((plato) => plato.nombre === nombrePlatoSinNumero && plato.dia === dias[index]) ? "seleccionado" : ""}`}
+                  value={dias[index] || ''} onChange={(e) => handleSelectChange(index, e)}>
                     <option value="">Seleccionar Día</option>
                     <option value="Lunes">Lunes</option>
                     <option value="Martes">Martes</option>
@@ -289,36 +336,32 @@ const handleDescartar = (nombrePlato, precioTotal) => {
                     <option value="Domingo">Domingo</option>
                   </select>
                   <div className="botones-bottom">
-
                     <button
-                      className={`boton-seleccionar ${platosSeleccionados.some((plato) => plato.nombre === nombrePlatoSinNumero) ? "seleccionado" : ""}`}
-                      onClick={() => handleSeleccionar(nombrePlato, index)}
-                      disabled={!dias[index]}
+                      className={`boton-seleccionar ${platosSeleccionados.some((plato) => plato.nombre === nombrePlatoSinNumero && plato.dia === dias[index]) ? "deshabilitado" : ""}`}
+                      onClick={() => handleSeleccionar(nombrePlato, index, getFullDayName(dias[index]))}
+                      disabled={!dias[index] || platosSeleccionados.some(plato => plato.dia === dias[index])}
                     >
                       Seleccionar
                     </button>
                     <button
                       className="boton-descartar"
                       onClick={() => handleDescartar(nombrePlato, parseFloat(precioTotal))}
-                      disabled={!dias[index]} 
+                      disabled={!dias[index]}
                     >
                       Descartar
                     </button>
                   </div>
                 </div>
               );
-
             })}
         </div>
-
         {platosSeleccionados.length > 0 && (
           <div className="guardar-plan-comidas">
-            <button onClick={handleGuardarPlanDeComidas}>
+            <button onClick={handleGuardarPlanDeComidas} >
               Guardar plan de comidas
             </button>
           </div>
         )}
-        
       </div>
 
       {/* Modal de ingredientes */}
@@ -339,12 +382,15 @@ const handleDescartar = (nombrePlato, precioTotal) => {
         presupuesto={presupuestoGuardado}
       />
 
+
       {/* Input hidden para el idUsuario */}
       <input type="hidden" name="idUsuario" value={idUsuario} disabled />
       <input type="hidden" name="nombre" value={nombre} disabled />
 
     </div>
+
   );
+
 }
 
 export default PlanificacionRecetas;

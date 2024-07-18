@@ -39,9 +39,6 @@ function Principal() {
             Encuentra el equilibrio perfecto entre una alimentación saludable y el bienestar mental.
           </p>
           <div className="button-group">
-            <a href="/#" className="btn-primary">
-              Recetas Saludables
-            </a>
             <a href="/#" className="btn-secondary" onClick={openModal}>
               Consejos
             </a>

@@ -1,8 +1,9 @@
-import React from "react";
+import React from 'react';
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-function HistorialPresupuesto({ historialPresupuesto = [], presupuestoDisplay, montoActual }) {
+function HistorialPresupuesto({ historialPresupuesto }) {
+
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     doc.text("Historial de Presupuesto", 10, 10);
@@ -12,9 +13,9 @@ function HistorialPresupuesto({ historialPresupuesto = [], presupuestoDisplay, m
 
     historialPresupuesto.forEach(item => {
       const historialData = [
-        item.mes || fechaActual,
-        item.presupuestoAsignado || presupuestoDisplay,
-        item.gastosReales || montoActual.toFixed(2)
+        item.fecha || fechaActual,
+        item.presupuesto || '',
+        item.monto ? item.monto.toFixed(2) : ''
       ];
       tableRows.push(historialData);
     });
@@ -31,28 +32,27 @@ function HistorialPresupuesto({ historialPresupuesto = [], presupuestoDisplay, m
   const fechaActual = new Date().toLocaleDateString();
 
   return (
-    <div>
+    <div className="historial-presupuesto">
       <h2>Historial de Presupuesto</h2>
-      <div className="historial-presupuesto">
-        <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Presupuesto Asignado (S/.)</th>
-              <th>Gastos Reales (S/.)</th>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Presupuesto</th>
+            <th>Gastos Reales</th>
+          </tr>
+        </thead>
+        <tbody>
+          {historialPresupuesto.map((entry, index) => (
+            <tr key={index}>
+              <td>{entry.fecha || fechaActual}</td>
+              <td>{entry.presupuesto || ''}</td>
+              <td>{entry.monto ? entry.monto.toFixed(2) : ''}</td>
             </tr>
-          </thead>
-          <tbody>
-            {historialPresupuesto.map((item, index) => (
-              <tr key={index}>
-                <td>{item.mes || fechaActual}</td>
-                <td>{item.presupuestoAsignado || presupuestoDisplay}</td>
-                <td>{item.gastosReales || montoActual.toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
+      <br></br>
       <button onClick={handleDownloadPDF}>Descargar en PDF</button>
     </div>
   );

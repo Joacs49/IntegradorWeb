@@ -1,13 +1,17 @@
 import React from "react";
 import axios from "axios";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import "../css/IngredientesModal.css";
 
 const IngredientesModal = ({ isOpen, onClose, platosSeleccionados, idUsuario, dias }) => {
+  
+  // Filtrar días duplicados y eliminar días vacíos
+  const diasSeleccionados = Array.from(new Set(dias.filter(dia => dia !== '')));
 
   const handleGenerarPDF = async () => {
     try {
       const idsRecetas = platosSeleccionados.map((plato) => parseInt(plato.idReceta));
-      const diasSeleccionados = dias.filter(dia => dia !== ''); // Filtrar días no seleccionados
 
       const data = {
         recetas: idsRecetas,
@@ -28,7 +32,43 @@ const IngredientesModal = ({ isOpen, onClose, platosSeleccionados, idUsuario, di
 
       if (response.status === 200) {
         console.log("Plan de comida guardado correctamente:", response.data);
-        // Implementa lógica adicional si es necesario
+
+        // Generar PDF con los datos
+        const doc = new jsPDF();
+        let y = 20; // Posición inicial en Y para cada plato
+
+        platosSeleccionados.forEach((plato, index) => {
+          // Añadir página nueva si es necesario
+          if (y > 270) { // Ajustar según el tamaño de la página y el espacio entre platos
+            doc.addPage();
+            y = 20; // Reiniciar posición en Y para nueva página
+          }
+
+          // Agregar texto del plato
+          doc.setFontSize(12);
+          doc.text(`Plato ${index + 1}: ${plato.nombre}`, 15, y);
+          
+          // Agregar ingredientes
+          doc.setFontSize(10);
+          let ingredientesText = "";
+          plato.ingredientes.forEach((ingrediente, i) => {
+            ingredientesText += `${i + 1}. ${ingrediente}\n`;
+          });
+          doc.text(ingredientesText, 15, y + 10);
+          
+          // Agregar precio total al final de la lista de ingredientes
+          doc.setFontSize(12);
+          doc.text(`Precio Total: $${plato.precioTotal}`, 15, y + 80);
+
+          // Dibujar borde alrededor del plato
+          doc.rect(10, y - 5, 190, 90); // Ajustar tamaño del cuadro según el contenido
+
+          // Aumentar posición en Y para siguiente plato
+          y += 100; // Ajustar según el tamaño del cuadro y el espacio entre platos
+        });
+
+        doc.save("detalles_platos_seleccionados.pdf");
+        
       } else {
         console.error("Error al guardar el plan de comida:", response.data);
         // Maneja el error según sea necesario
@@ -49,7 +89,7 @@ const IngredientesModal = ({ isOpen, onClose, platosSeleccionados, idUsuario, di
               <div key={index} className="plato-detalle">
                 <h3>{plato.nombre}</h3>
                 <input
-                  type="text"
+                  type="hidden"
                   className="id-plato-input"
                   value={plato.idReceta} // Mostrar el número de receta aquí
                   disabled
@@ -59,10 +99,9 @@ const IngredientesModal = ({ isOpen, onClose, platosSeleccionados, idUsuario, di
                     <li key={i}>{ingrediente}</li>
                   ))}
                 </ul>
-                <p>Precio Total: ${plato.precioTotal}</p>
                 <div className="select-container">
                   <span className="dia-seleccionado">
-                    {dias[index] !== undefined ? `Día seleccionado: ${dias[index]}` : "Selecciona un día"}
+                    {plato.dia ? `Día seleccionado: ${plato.dia}` : "Selecciona un día"}
                   </span>
                 </div>
               </div>
@@ -85,3 +124,4 @@ const IngredientesModal = ({ isOpen, onClose, platosSeleccionados, idUsuario, di
 };
 
 export default IngredientesModal;
+

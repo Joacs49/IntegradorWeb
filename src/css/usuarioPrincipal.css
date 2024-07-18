@@ -336,6 +336,13 @@ button:hover {
   transition: background-color 0.3s ease;
 }
 
+.boton-seleccionar.deshabilitado {
+  pointer-events: none; /* Deshabilita eventos de puntero */
+  opacity: 0.6; /* Opacidad reducida para indicar deshabilitado */
+  /* Otros estilos de deshabilitado según necesidades */
+}
+
+
 .boton-seleccionar.seleccionado {
   background-color: #38a169;
 }
@@ -364,6 +371,18 @@ button:hover {
 
 .presupuesto-error {
   color: red; /* Color de texto rojo para el mensaje de error */
+}
+
+.dias-select {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px; /* Ajusta el ancho según tus necesidades */
+}
+
+.dias-select.seleccionado {
+  background-color: lightblue; /* Ejemplo de estilo cuando está seleccionado */
 }
 
 

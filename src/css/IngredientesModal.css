@@ -1,3 +1,8 @@
+.modal-content {
+  max-height: 70vh; /* Altura máxima del contenido */
+  overflow-y: auto; /* Scroll vertical cuando el contenido excede */
+}
+
 .modal-container {
   position: fixed;
   top: 0;
